@@ -12,15 +12,15 @@ class transfer_client:
     def connect_to_server(self):
         self.s.connect(self.server_addr)
 
-    def send_message(self, message):
+    def send_file(self, message):
         self.s.send(message)
         self.s.close()
 
     def read_file(self, file_name):
         f = open(file_name, 'rb')
         try:
-            data = f.read()
-            self.send_message(data)
+            file_data = f.read()
+            self.send_file(file_data)
             print('Transferred file ' + file_name)
         except FileException:
             print("Unable to read file")
