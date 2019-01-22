@@ -16,7 +16,7 @@ class transfer_client:
         self.s.send(message)
         self.s.close()
 
-    def read_file(self, file_name):
+    def get_file(self, file_name):
         f = open(file_name, 'rb')
         try:
             file_data = f.read()

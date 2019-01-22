@@ -1,12 +1,13 @@
+import socket
+
 import registerar
 import client
-import socket
 #import transfer_server
 import transfer_client
 
 
 c = transfer_client.transfer_client(socket.gethostname())
-c.read_file('SampleAudio.mp3')
+c.get_file('SampleAudio.mp3')
 
 '''s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_addr = (socket.gethostname(), 6050)
