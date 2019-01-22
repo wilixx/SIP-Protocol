@@ -12,8 +12,8 @@ class transfer_client:
     def connect_to_server(self):
         self.s.connect(self.server_addr)
 
-    def send_file(self, message):
-        self.s.send(message)
+    def send_file(self, file_data):
+        self.s.send(file_data)
         self.s.close()
 
     def get_file(self, file_name):
@@ -24,4 +24,5 @@ class transfer_client:
             print('Transferred file ' + file_name)
         except FileException:
             print("Unable to read file")
-        f.close()
+        finally:
+            f.close()

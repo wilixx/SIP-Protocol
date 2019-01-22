@@ -36,6 +36,14 @@ class client:
         self.content_sub_type = content_sub_type
         self.connect_to_server()
 
+    def send_file(self, server_addr, file_name):
+        c = transfer_client.transfer_client(server_addr)
+        c.get_file(file_name)
+
+    def recv_file(self, file_type, extension):
+        t = transfer_server.transfer_server(file_type, extension)
+        t.save_file(file_type, file_data, extension)
+
     def connect_to_server(self):
         self.s.connect(self.client_addr)
 
