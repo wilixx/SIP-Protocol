@@ -18,6 +18,10 @@ class transfer_client:
 
     def read_file(self, file_name):
         f = open(file_name, 'rb')
-        data = f.read()
-        self.send_message(data)
+        try:
+            data = f.read()
+            self.send_message(data)
+            print('Transferred file ' + file_name)
+        except FileException:
+            print("Unable to read file")
         f.close()

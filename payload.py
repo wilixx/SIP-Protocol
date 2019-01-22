@@ -4,8 +4,8 @@ from random import choice
 class payload:
     payload = ''
 
-    #def __init__(self):
-        #self.make_payload('UserA', 'there.com', '192.168.1.240', 'audio')
+    def __init__(self, sender_name, domain, destination_client_ip, media_type):
+        self.make_payload(sender_name, domain, destination_client_ip, media_type)
 
     def get_payload(self):
         return self.payload

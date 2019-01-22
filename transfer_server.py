@@ -8,7 +8,7 @@ class transfer_server:
 
     server_addr = (socket.gethostname(), port)
     max_num_of_clients = 1
-    buff_size = 4096
+    buff_size = 4096000
 
     def __init__(self):
         self.create_server()
@@ -20,8 +20,8 @@ class transfer_server:
         try:
             while True:
                 (client_socket, addr) = self.s.accept()
-                msg = self.s.recv(self.buff_size)
-                print(msg)
+                msg = client_socket.recv(self.buff_size)
+                print(msg)   #Specify details about payload before sending
                 client_socket.close()
         except KeyboardInterrupt or Exception:
                 print('Closed socket')
