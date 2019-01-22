@@ -14,9 +14,12 @@ content_sub_type = 'sdp'
 port = 6050
 
 r = registerar.registerar(sender_name, domain, protocol, port, receiver_network_name, sender_network_name, receiver_name, request_type[0], subject, content_type, content_sub_type)
-r.trying(1)
+packet = r.trying(1)
+print(packet)
 print(' ')
-r.ringing(1)
+packet = r.ringing(1)
+print(packet)
 print(' ')
-r.ok(1)
+packet = r.ok(1)
+print(packet)
 print(' ')

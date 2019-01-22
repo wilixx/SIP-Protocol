@@ -51,7 +51,12 @@ class registerar:
 
     def serve_client(self, client_socket, addr):
         msg = client_socket.recv(self.buff_size)
-        print(msg)
+        packet = self.ok(1)
+        if msg[:8].decode('UTF-8') == 'REGISTER':
+            print(packet)
+            print(' ')
+            client_socket.send(packet.encode('UTF-8'))
+            print('Registered client: ' + self.sender_network_name) #Would throw an error if client already exists
 
     def trying(self, seq_num):
         r = response_packet.response_packet(100, self.sender_name, self.domain, self.protocol, self.port, self.sender_network_name, self.receiver_network_name, self.receiver_name, seq_num, self.request_type ,self.subject, self.content_type, self.content_sub_type)

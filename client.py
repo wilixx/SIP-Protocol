@@ -8,6 +8,7 @@ import payload
 
 class client:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    buff_size = 4096
 
     sender_name = ''
     domain = ''
@@ -34,7 +35,7 @@ class client:
         self.subject = subject
         self.content_type = content_type
         self.content_sub_type = content_sub_type
-        self.connect_to_server()
+        self.connect_to_server(1)
 
     def send_file(self, server_addr, file_name):
         c = transfer_client.transfer_client(server_addr)
@@ -44,15 +45,22 @@ class client:
         t = transfer_server.transfer_server(file_type, extension)
         t.save_file(file_type, file_data, extension)
 
-    def connect_to_server(self):
+    def connect_to_server(self, seq_num):
         self.s.connect(self.client_addr)
+        packet = self.register_client(seq_num)
+        print(packet)
+        print(' ')
+        self.s.send(packet.encode('UTF-8'))
+        packet = self.s.recv(self.buff_size)
 
     def send_message(self, message):
         self.s.send(message.encode('UTF-8'))
         self.s.close()
 
-    def register_client(self, client, login):
-        r = request_packet.request_packet()
+    def register_client(self, seq_num):
+        r = request_packet.request_packet(3, self.sender_name, self.domain, self.protocol, self.port, self.sender_network_name, self.receiver_network_name, self.receiver_name, seq_num, self.subject, self.content_type, self.content_sub_type)
+        packet = r.get_packet()
+        return packet
 
     def invite(self, seq_num):
         r = request_packet.request_packet(1, self.sender_name, self.domain, self.protocol, self.port, self.sender_network_name, self.receiver_network_name, self.receiver_name, seq_num, self.subject, self.content_type, self.content_sub_type)

@@ -14,7 +14,9 @@ content_sub_type = 'sdp'
 port = 6050
 
 c = client.client(sender_name, domain, protocol, port, receiver_network_name, sender_network_name, receiver_name, subject, content_type, content_sub_type)
-'''c.invite(1)
+packet = c.invite(1)
+print(packet)
 print(' ')
-c.ack(1)
-print(' ')'''
+packet = c.ack(1)
+print(packet)
+print(' ')
