@@ -43,7 +43,6 @@ class registerar:
             while True:
                 (client_socket, addr) = self.s.accept()
                 threading.Thread(self.serve_client(client_socket, addr)).run()
-                client_socket.close()
         except KeyboardInterrupt:
             print('Closed socket')
         finally:
@@ -53,8 +52,6 @@ class registerar:
         msg = client_socket.recv(self.buff_size)
         packet = self.ok(1)
         if msg[:8].decode('UTF-8') == 'REGISTER':
-            print(packet)
-            print(' ')
             client_socket.send(packet.encode('UTF-8'))
             print('Registered client: ' + self.sender_network_name) #Would throw an error if client already exists
 

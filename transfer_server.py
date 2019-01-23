@@ -25,7 +25,6 @@ class transfer_server:
                 (client_socket, addr) = self.s.accept()
                 file_data = client_socket.recv(self.buff_size)
                 self.save_file(file_type, file_data, extension)
-                client_socket.close()
         except KeyboardInterrupt or Exception:
                 print('Closed socket')
         finally:
