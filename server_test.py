@@ -1,6 +1,6 @@
 import registerar
 
-server_name = 'REGISTERAR'
+server_name = ' REGISTERAR'
 domain = 'there.com'
 protocol = 'TCP'
 server_network_name = 'registerar'

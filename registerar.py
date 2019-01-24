@@ -5,7 +5,6 @@ import response_packet
 
 class registerar:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_addr = ((socket.gethostname(), 6050))
     buff_size = 4096
     max_num_of_clients = 10
@@ -56,27 +55,31 @@ class registerar:
             print('Registered client: ' + self.server_network_name)
             print('')
             #Establish session when we receive invite packet from client
-            self.establish_session(client_socket, seq_num)
+            
+            #self.establish_session(client_socket, seq_num)
 
     def establish_session(self, client_socket, seq_num):
         #Get details of client from database
         client_name = 'CLIENT1'
         client_network_name = 'client1'
         subject = 'file name'
-        invite_packet = client_socket.recv(self.buff_size)
-        print(invite_packet.decode('UTF-8'))
+        invite_packet = client_socket.recv(self.buff_size).decode('UTF-8')
+        print(invite_packet)
         print('')
         trying_packet = self.trying(seq_num, client_name, client_network_name, subject, 'TRYING')
         client_socket.send(trying_packet.encode('UTF-8'))
         print('Sent trying packet')
+        print('')
         ringing_packet = self.ringing(seq_num, client_name, client_network_name, subject, 'RINGING')
         client_socket.send(ringing_packet.encode('UTF-8'))
         print('Sent ringing packet')
+        print('')
         ok_packet = self.ok(seq_num, client_name, client_network_name, subject, 'OK')
         client_socket.send(ok_packet.encode('UTF-8'))
         print('Sent ok packet')
-        ack_packet = client_socket.recv(self.buff_size)
-        print(ack_packet.decode('UTF-8'))
+        print('')
+        ack_packet = client_socket.recv(self.buff_size).decode('UTF-8')
+        print(ack_packet)
         print('')
 
     def trying(self, seq_num, client_name, client_network_name, subject, request_type):

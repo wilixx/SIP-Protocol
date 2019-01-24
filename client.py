@@ -8,8 +8,7 @@ import payload
 
 class client:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    buff_size = 40961
+    buff_size = 4096
 
     client_name = ''
     domain = ''
@@ -54,10 +53,6 @@ class client:
         print(' ')
         self.establish_session(seq_num, 'file_name')
 
-    def disconnect_from_server():
-        #Deregister
-        self.s.close()
-
     def establish_session(self, seq_num, subject):
         invite_packet = self.invite(1)
         self.send_message(invite_packet)
@@ -67,10 +62,10 @@ class client:
         print('')
         ringing_packet = self.s.recv(self.buff_size).decode('UTF-8')
         print(ringing_packet)
-        print('')
+        print('\n')
         ok_packet = self.s.recv(self.buff_size).decode('UTF-8')
         print(ok_packet)
-        print("")
+        print('')
         ack_packet = self.ack(4)
         self.send_message(ack_packet)
         print('Sent ack packet')
