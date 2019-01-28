@@ -81,8 +81,8 @@ class response_packet:
     def add_subject(self, subject):
         self.packet += '\r\nSubject ' + subject
 
-    def add_contact(self, receiver_network_name, receever_name, domain):
-        self.packet += '\r\nContact ' + receiver_network_name + '<sip:' + receever_name + '@' + domain + '>'
+    def add_contact(self, receiver_network_name, receiver_name, domain):
+        self.packet += '\r\nContact ' + receiver_network_name + '<sip:' + receiver_name + '@' + domain + '>'
 
     def add_content_type(self, content_type, content_sub_type):
         self.packet += '\r\nContent-Type ' + content_type + '/' + content_sub_type

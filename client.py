@@ -4,11 +4,13 @@ import transfer_server
 import transfer_client
 import request_packet
 import payload
+import database
 
 
 class client:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     buff_size = 4096
+    db = None
 
     client_name = ''
     domain = ''
@@ -33,6 +35,7 @@ class client:
         self.client_name = client_name
         self.content_type = content_type
         self.content_sub_type = content_sub_type
+        self.db = database.database()
         self.connect_to_server(1)
 
     def send_file(self, server_addr, file_name):
@@ -54,6 +57,7 @@ class client:
         self.establish_session(seq_num, 'file_name')
 
     def establish_session(self, seq_num, subject):
+        a = self.db.display_data({'client_name': 'CLIENT1', 'client_network_name': 'client1'})
         invite_packet = self.invite(1)
         self.send_message(invite_packet)
         print('Sent invite packet')
@@ -62,7 +66,7 @@ class client:
         print('')
         ringing_packet = self.s.recv(self.buff_size).decode('UTF-8')
         print(ringing_packet)
-        print('\n')
+        print('')
         ok_packet = self.s.recv(self.buff_size).decode('UTF-8')
         print(ok_packet)
         print('')
