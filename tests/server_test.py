@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, 'C:\\Users\\R&DTrainee3\\Desktop\\SIP-Protocol\\src')
 import registerar
 
 server_name = ' REGISTERAR'
@@ -11,13 +13,13 @@ content_type = 'application'
 content_sub_type = 'sdp'
 port = 6050
 
-def enter_client_details():
+'''def enter_client_details():
     server_name = raw_input('Enter Client Name: ')
     domain = raw_input('Enter Domain Name: ')
     protocol = raw_input('Enter Protocol Name(TCP/UDP): ')
     server_network_name = raw_input('Enter server Network Name: ')
     subject = raw_input('Enter Subject: ')
-    port = raw_input('Enter Port: ')
+    port = raw_input('Enter Port: ')'''
 
 
 r = registerar.registerar(server_name, domain, protocol, port, server_network_name, content_type, content_sub_type)

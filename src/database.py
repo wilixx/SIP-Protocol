@@ -8,7 +8,7 @@ class database:
     c = ''
 
     def __init__(self):#table_name=None, columns=None):
-        self.conn = sqlite3.connect('clients.db')
+        self.conn = sqlite3.connect('../database/clients.db')
         self.c = self.conn.cursor()
         #self.table_name = table_name
         #self.columns = columns

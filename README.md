@@ -8,3 +8,5 @@ The following diagrams showcase the working of SIP Protocol:
 ![Work flow of Client and B2BUA](https://raw.githubusercontent.com/trishantpahwa/SIP-Protocol/master/images/SIP-B2BUA-call-flow.png)
 ### Flow Diagram to showcase the working of SIP
 ![Basic flow](https://raw.githubusercontent.com/trishantpahwa/SIP-Protocol/master/images/SIP_signaling.png)
+
+Developed this project under the guidence of Mr. Anil at Vaaan Infra.
