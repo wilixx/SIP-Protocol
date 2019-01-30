@@ -7,7 +7,7 @@ class transfer_server:
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = 6051 #Encrypt communication
-    server_addr = (socket.gethostname(), port)
+    server_addr = (socket.gethostbyname(socket.gethostname()), port)
     max_num_of_clients = 1
     buff_size = 8192
 

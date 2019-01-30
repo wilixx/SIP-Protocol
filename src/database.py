@@ -3,7 +3,7 @@ import sqlite3
 class database:
 
     table_name = 'clients'
-    columns = [ 'client_name', 'client_network_name', 'subject' ]
+    columns = [ 'client_name', 'client_network_name', 'subject', 'ip']
     conn = ''
     c = ''
 
@@ -38,8 +38,8 @@ class database:
             display_statement += '* FROM ' + self.table_name + ";"
         return display_statement
 
-    def insert_data(self, client_name, client_network_name, subject):
-        insert_statement = 'INSERT INTO ' + self.table_name + ' VALUES(\"' + client_name + '\",\"' + client_network_name + '\",\"' + subject + '\")' + ";"
+    def insert_data(self, client_name, client_network_name, subject, ip):
+        insert_statement = 'INSERT INTO ' + self.table_name + ' VALUES(\"' + client_name + '\",\"' + client_network_name + '\",\"' + subject + ip + '\")' + ";"
         return insert_statement
 
     def update_data(self, where_clause={}, update_clause={}):

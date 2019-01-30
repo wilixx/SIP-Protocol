@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, 'C:\\Users\\R&DTrainee3\\Desktop\\SIP-Protocol\\src')
-from src import client
+import client
 
 client_name = 'CLIENT1'
 domain = 'there.com'

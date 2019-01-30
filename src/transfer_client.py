@@ -3,7 +3,7 @@ import socket
 class transfer_client:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = 6051  # Encrypt communication
-    server_addr = (socket.gethostname(), port)
+    server_addr = (socket.gethostbyname(socket.gethostname()), port)
 
     def __init__(self):
         self.connect_to_server()

@@ -23,7 +23,7 @@ class client:
     content_sub_type = ''
     tag = 123
 
-    client_addr = (socket.gethostname(), port)
+    client_addr = (socket.gethostbyname(socket.gethostname()), port)
 
     def __init__(self, client_name, domain, protocol, port, client_network_name, server_network_name, server_name, content_type, content_sub_type):
         self.server_name = server_name
@@ -54,14 +54,18 @@ class client:
         packet = self.s.recv(self.buff_size).decode('UTF-8')
         print(packet)
         print(' ')
-        self.establish_session(seq_num, 'file_name')
+        self.establish_session(seq_num, socket.gethostbyname(socket.gethostname()), 'audio')
 
-    def establish_session(self, seq_num, subject):
+    def establish_session(self, seq_num, destination_client_ip, media_type):
         self.db.display_data({'client_name': 'CLIENT1', 'client_network_name': 'client1'})
-        invite_packet = self.invite(1)
+        invite_packet = self.invite(1) #seq_num here
         self.send_message(invite_packet)
         print('Sent invite packet')
-        trying_packet = self.s.recv(self.buff_size).decode('UTF-8')
+        payload = self.payload(destination_client_ip, media_type)
+        self.send_message(payload)
+        print('Sent payload')
+
+        '''trying_packet = self.s.recv(self.buff_size).decode('UTF-8')
         print(trying_packet)
         print('')
         ringing_packet = self.s.recv(self.buff_size).decode('UTF-8')
@@ -70,9 +74,12 @@ class client:
         ok_packet = self.s.recv(self.buff_size).decode('UTF-8')
         print(ok_packet)
         print('')
-        ack_packet = self.ack(4)
+        ack_packet = self.ack(4) #seq_num here
         self.send_message(ack_packet)
         print('Sent ack packet')
+        payload = self.payload(destination_client_ip, media_type)
+        self.send_message(payload)
+        print('Sent payload')'''
 
     def send_message(self, message):
         self.s.send(message.encode('UTF-8'))
@@ -92,8 +99,10 @@ class client:
         packet = r.get_packet()
         return packet
 
-    def send_data(self, data):
-        p = payload.payload()
+    def payload(self, destination_client_ip, media_type):
+        p = payload.payload(self.client_name, self.domain, destination_client_ip, media_type)
+        p = p.get_payload()
+        return p
 
     def bye(self, seq_num):
         r = request_packet.request_packet(2, self.client_name, self.domain, self.protocol, self.port, self.client_network_name, self.server_network_name, self.server_name, seq_num, 'BYE', self.content_type, self.content_sub_type)
