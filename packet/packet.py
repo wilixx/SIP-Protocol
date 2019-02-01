@@ -1,0 +1,36 @@
+from random import choice
+from string import digits
+
+class packet:
+    __packet = ''
+
+    def __init__(self, code, sender_name, domain, protocol, port, sender_network_name, receiver_network_name, receiver_name, seq_num, subject, content_type, content_sub_type, tag='123'):
+        self.make_packet(code, sender_name, domain, protocol, port, sender_network_name, receiver_network_name, receiver_name, seq_num, subject, content_type, content_sub_type, tag)
+
+    def get_packet(self):
+        return self.packet
+
+    def __add_via(self, protocol, domain, port):
+        self.packet += '\r\nVia SIP/2.0/' + protocol + ' ' + domain + ':' + str(port)
+
+    def __add_from(self, sender_network_name, sender_name, domain, tag):
+        self.packet += '\r\nFrom ' + sender_network_name + ' <sip:' + sender_name + '@' + domain + '>;tag=' + str(tag)
+
+    def __add_to(self, receiver_network_name, receiver_name, domain, tag):
+        self.packet += '\r\nTo ' + receiver_network_name + ' <sip:' + receiver_name + '@' + domain + '>;tag=' + str(tag)
+
+    def __add_call_id(self):
+        random_string = ''.join(choice(digits) for _ in range(8))
+        self.packet += '\r\nCallID ' + random_string
+
+    def __add_subject(self, subject):
+        self.packet += '\r\nSubject ' + subject
+
+    def __add_contact(self, receiver_network_name, receiver_name, domain):
+        self.packet += '\r\nContact ' + receiver_network_name + ' <sip:' + receiver_name + '@' + domain + '>'
+
+    def __add_content_type(self, content_type, content_sub_type):
+        self.packet += '\r\nContent-Type ' + content_type + '/' + content_sub_type
+
+    def make_packet(self, code, sender_name, receiver_network_name, receiver_name, seq_num, subject, content_type, content_sub_type, tag):
+

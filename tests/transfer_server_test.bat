@@ -1,1 +1,0 @@
-python transfer_server_test.py
