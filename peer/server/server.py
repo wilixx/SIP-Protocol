@@ -1,23 +1,23 @@
+from peer import peer
 import socket
 
-class server:
-
-    __s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    __port = 6051
-    __server_addr = ()
-    _max_num_of_clients = 1
+class server(peer):
+    __peer_ = None
+    __server_address = ()
+    __max_num_of_clients = 1
     __buff_size = 8192
 
-    def __init__(self, port=6051, max_num_of_clients=1, buff_size=8192):
-        self.__port = port
-        self._set_max_num_of_clients(max_num_of_clients)
-        self._set_buff_size(buff_size)
-        self._set_server_addr()
+    def __init__(self, port=6050, max_num_of_clients=1, buff_size=8192):
+        self.__peer_ = peer.peer()
+        self.__set_port(port)
+        self.__set_max_num_of_clients(max_num_of_clients)
+        self.__set_buff_size(buff_size)
+        self.__set_server_address()
 
     def _create_server(self, func):
-        print('Started transfer server at address:' + self._get_server_addr())
-        self.__s.bind(self.__server_addr)
-        self.__s.listen(self._max_num_of_clients)
+        print('Started transfer_tests server at address:' + str(self.__get_server_address()))
+        self.__s.bind(self.__get_server_address())
+        self.__s.listen(self.__get_max_num_of_clients())
         try:
             while True:
                 (client_socket, addr) = self.__s.accept()
@@ -32,27 +32,3 @@ class server:
             return func[1](client_socket)
         else:
             return func[1](client_socket, 'bat', 'bat')
-
-    def _set_port(self, port):
-        self.__port = port
-
-    def _get_port(self):
-        return str(self.__port)
-
-    def _set_server_addr(self):
-        self.__server_addr = (socket.gethostbyname(socket.gethostname()), self.__port)
-
-    def _get_server_addr(self):
-        return str(self.__server_addr)
-
-    def _set_max_num_of_clients(self, max_num_of_clients):
-        self._max_num_of_clients = max_num_of_clients
-
-    def _get_max_num_of_clients(self):
-        return str(self._max_num_of_clients)
-
-    def _set_buff_size(self, buff_size):
-        self.__buff_size = buff_size
-
-    def _get_buff_size(self):
-        return self.__buff_size

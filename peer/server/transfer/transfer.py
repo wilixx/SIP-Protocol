@@ -4,15 +4,14 @@ from string import digits
 from peer.server.server import server
 
 class transfer(server):
-
     __s = None
 
     __file_type = None
     __extension = None
 
     def __init__(self, file_type, extension):
-        self._set_file_type(file_type)
-        self._set_extension(extension)
+        self.__set_file_type(file_type)
+        self.__set_extension(extension)
         self.__s = server(6051, 10)
         self.__s._create_server((self._transfer_data.__name__, self._transfer_data))
 
@@ -29,7 +28,7 @@ class transfer(server):
         self._save_file(file_data)
 
     def _save_file(self, file_data):
-        file_name = self._get_file_type() + ''.join(choice(digits) for _ in range(8)) + ''.join(datetime.date.today().isoformat().split('-')) + '.' + self._get_extension()
+        file_name = self.__get_file_type() + ''.join(choice(digits) for _ in range(8)) + ''.join(datetime.date.today().isoformat().split('-')) + '.' + self.__get_extension()
         try:
             f = open(file_name, 'rb')
             f.write(file_data)
@@ -39,14 +38,14 @@ class transfer(server):
         finally:
             f.close()
 
-    def _set_file_type(self, file_type):
+    def __set_file_type(self, file_type):
         self.__file_type = file_type
 
-    def _get_file_type(self):
+    def __get_file_type(self):
         return self.__file_type
 
-    def _set_extension(self, extension):
+    def __set_extension(self, extension):
         self.__extension = extension
 
-    def _get_extension(self):
+    def __get_extension(self):
         return self.__extension
