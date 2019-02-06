@@ -1,5 +1,6 @@
 # Temporary removal of old files
 old_files/
+.vscode/
 #PyCharm
 .idea
 # Byte-compiled / optimized / DLL files

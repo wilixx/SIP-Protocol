@@ -5,9 +5,6 @@ class peer:
     __db = None
     __s = socket
 
-    __username = None
-    __password = None
-
     __protocol = ''
     __port = 6050
     __s_address = ()
@@ -34,12 +31,6 @@ class peer:
     def _socket_listen(self, backlog):
         self.__s.listen(backlog)
 
-    def __set_protocol(self, protocol):
-        self.__protocol = protocol
-
-    def get_protocol(self):
-        return self.__protocol
-
     def _socket_accept(self):
         (client_socket, addr) = self.__s.accept()
         return (client_socket, addr)
@@ -65,6 +56,12 @@ class peer:
     def client_receive_message(self, client_socket):
         message = client_socket.recv(self.get_buff_size()).decode('UTF-8')
         return message
+
+    def __set_protocol(self, protocol):
+        self.__protocol = protocol
+
+    def get_protocol(self):
+        return self.__protocol
 
     def __set_port(self, port):
         self.__port = port

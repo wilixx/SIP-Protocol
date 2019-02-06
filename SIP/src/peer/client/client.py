@@ -1,5 +1,6 @@
 from src.peer import peer
 
+
 class client(peer):
     __peer_ = None
     __client_socket_ = None
@@ -17,7 +18,7 @@ class client(peer):
     __content_sub_type = ''
 
     def __init__(self, username, password, client_name, domain, protocol, client_network_name, content_type, content_sub_type):
-        self.__peer_ = peer.peer(6050) # port for packet transmission, username, password
+        self.__peer_ = peer.peer(6050) # port for packet transmission
         self.__set_username(username)
         self.__set_password(password)
         self.__set_client_name(client_name)
@@ -32,7 +33,7 @@ class client(peer):
         if func[0] == '_register_server':
             return func[1](client_socket)
         else:
-            return func[1](client_socket, 'bat', 'bat') # Number of arguments
+            return func[1](client_socket, 'bat', 'bat')  # Number of arguments
 
     def __set_username(self, username):
         self.__username = username
