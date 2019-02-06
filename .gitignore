@@ -1,3 +1,5 @@
+# Temporary removal of old files
+old_files/
 #PyCharm
 .idea
 # Byte-compiled / optimized / DLL files

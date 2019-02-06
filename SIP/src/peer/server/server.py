@@ -9,15 +9,16 @@ class server(peer):
     __server_name = ''
     __domain = ''
     __protocol = ''
+    __port = ''
     __server_network_name = ''
     __content_type = ''
     __content_sub_type = ''
 
-    def __init__(self, server_name, domain, protocol, server_network_name, content_type, content_sub_type, max_num_of_clients=1, buff_size=8192):
-        self.__peer_ = peer.peer(6050)
+    def __init__(self, server_name, domain, port, server_network_name, content_type, content_sub_type, max_num_of_clients=1, buff_size=8192):
+        self.__peer_ = peer('TCP', 6050)
         self.__set_server_name(server_name)
         self.__set_domain(domain)
-        self.__set_protocol(protocol)
+        self.__set_port(port)
         self.__set_server_network_name(server_network_name)
         self.__set_content_type(content_type)
         self.__set_content_sub_type(content_sub_type)
@@ -55,7 +56,7 @@ class server(peer):
     def get_domain(self):
         return self.__domain
 
-    def __set_set_server_network_name(self, server_network_name):
+    def __set_server_network_name(self, server_network_name):
         self.__server_network_name = server_network_name
 
     def get_server_network_name(self):
@@ -73,11 +74,11 @@ class server(peer):
     def get_content_sub_type(self):
         return self.__content_sub_type
 
-    def __set_protocol(self, protocol):
-        self.__protocol = protocol
-
-    def get_protocol(self):
-        return self.__protocol
+    def __set_port(self, port):
+        self.__port = port
+    
+    def get_port(self):
+        return self.__port
 
     def __set_max_num_of_clients(self, max_num_of_clients):
         self.max_num_of_clients = max_num_of_clients
