@@ -5,10 +5,10 @@ from string import digits
 class packet:
     __packet = ''
 
-    def __init__(self, code, sender_name, domain, protocol, port,
+    def __init__(self, request_type, sender_name, domain, protocol, port,
                  sender_network_name, receiver_network_name, receiver_name,
                  seq_num, subject, content_type, content_sub_type, tag='123'):
-        self.__make_packet(code, sender_name, domain, protocol, port,
+        self.__make_packet(request_type, sender_name, domain, protocol, port,
                            sender_network_name, receiver_network_name,
                            receiver_name, seq_num, subject, content_type,
                            content_sub_type, tag)
@@ -49,7 +49,7 @@ class packet:
         self.__packet += '\r\nContent-Type: ' + content_type + '/' + \
             content_sub_type
 
-    def __make_packet(self, code, sender_name, sender_network_name,
+    def __make_packet(self, request_type, sender_name, sender_network_name,
                       domain, protocol, port, receiver_name,
                       receiver_network_name, seq_num, subject, content_type,
                       content_sub_type, tag):
@@ -57,7 +57,7 @@ class packet:
         self.__add_from(sender_network_name, sender_name, domain, tag)
         self.__add_to(receiver_network_name, receiver_name, domain, tag)
         self.__add_call_id()
-        self.__add_cseq(seq_num, code[0])
+        self.__add_cseq(seq_num, request_type)
         self.__add_subject(subject)
         self.__add_contact(receiver_network_name, receiver_name, domain)
         self.__add_content_type(content_type, content_sub_type)
