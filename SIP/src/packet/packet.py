@@ -57,7 +57,7 @@ class packet:
         self.__add_from(sender_network_name, sender_name, domain, tag)
         self.__add_to(receiver_network_name, receiver_name, domain, tag)
         self.__add_call_id()
-        self.__add_cseq(seq_num, code)
+        self.__add_cseq(seq_num, code[0])
         self.__add_subject(subject)
         self.__add_contact(receiver_network_name, receiver_name, domain)
         self.__add_content_type(content_type, content_sub_type)

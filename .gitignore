@@ -1,7 +1,8 @@
 # Temporary removal of old files
 old_files/
+# VSCode
 .vscode/
-#PyCharm
+# PyCharm
 .idea
 # Byte-compiled / optimized / DLL files
 __pycache__/
