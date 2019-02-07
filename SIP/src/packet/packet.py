@@ -5,12 +5,12 @@ from string import digits
 class packet:
     __packet = ''
 
-    def __init__(self, request_type, sender_name, domain, protocol, port,
+    def __init__(self, sender_name, domain, request_type, protocol, port,
                  sender_network_name, receiver_network_name, receiver_name,
-                 seq_num, subject, content_type, content_sub_type, tag='123'):
-        self.__make_packet(request_type, sender_name, domain, protocol, port,
-                           sender_network_name, receiver_network_name,
-                           receiver_name, seq_num, subject, content_type,
+                 seq_num, subject, content_type, content_sub_type, tag):
+        self.__make_packet(sender_name, sender_network_name, domain, protocol,
+                           port, receiver_name, receiver_network_name, seq_num,
+                           request_type, subject, content_type,
                            content_sub_type, tag)
 
     def get_packet(self):
@@ -49,9 +49,9 @@ class packet:
         self.__packet += '\r\nContent-Type: ' + content_type + '/' + \
             content_sub_type
 
-    def __make_packet(self, request_type, sender_name, sender_network_name,
-                      domain, protocol, port, receiver_name,
-                      receiver_network_name, seq_num, subject, content_type,
+    def __make_packet(self, sender_name, sender_network_name, domain,
+                      protocol, port, receiver_name, receiver_network_name,
+                      seq_num, request_type, subject, content_type,
                       content_sub_type, tag):
         self.__add_via(protocol, domain, port)
         self.__add_from(sender_network_name, sender_name, domain, tag)
