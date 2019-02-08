@@ -9,10 +9,10 @@ class request(packet):
     def __init__(self, request_type, sender_name, sender_network_name, domain,
                  protocol, port, receiver_name, receiver_network_name, seq_num,
                  subject, content_type, content_sub_type, tag):
-        self.__packet_ = packet(request_type, sender_name, sender_network_name,
+        self.__packet_ = packet(sender_name, sender_network_name,
                                 domain, protocol, port, receiver_name,
-                                receiver_network_name, seq_num, subject,
-                                content_type, content_sub_type, tag)
+                                receiver_network_name, seq_num, request_type,
+                                subject, content_type, content_sub_type, tag)
         self.__add_uri(request_type, receiver_name, domain)
 
     def __add_uri(self, request_type, receiver_name, domain):

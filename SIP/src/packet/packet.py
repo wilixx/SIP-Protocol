@@ -5,9 +5,10 @@ from string import digits
 class packet:
     __packet = ''
 
-    def __init__(self, sender_name, domain, request_type, protocol, port,
-                 sender_network_name, receiver_network_name, receiver_name,
-                 seq_num, subject, content_type, content_sub_type, tag):
+    def __init__(self, sender_name, sender_network_name, domain, protocol,
+                 port, receiver_network_name, receiver_name,
+                 seq_num, request_type, subject, content_type,
+                 content_sub_type, tag):
         self.__make_packet(sender_name, sender_network_name, domain, protocol,
                            port, receiver_name, receiver_network_name, seq_num,
                            request_type, subject, content_type,
@@ -15,9 +16,6 @@ class packet:
 
     def get_packet(self):
         return self.__packet
-
-    def __add_uri(self, uri):
-        self.__packet = uri + self.__packet
 
     def __add_via(self, protocol, domain, port):
         self.__packet += '\r\nVia SIP/2.0/' + protocol + ' ' + domain + ':' + \
@@ -31,8 +29,8 @@ class packet:
         self.__packet += '\r\nTo: ' + receiver_network_name + \
             '<sip:' + receiver_name + '@' + domain + '>;tag=' + tag
 
-    def __add_cseq(self, seq, packet_type):
-        self.__packet += '\r\nCSeq: ' + seq + ' ' + packet_type
+    def __add_cseq(self, seq, request_type):
+        self.__packet += '\r\nCSeq: ' + seq + ' ' + request_type
 
     def __add_subject(self, subject):
         self.__packet += '\r\nSubject: ' + subject

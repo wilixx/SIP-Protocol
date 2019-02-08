@@ -1,9 +1,9 @@
 from request.request import request
 from response.response import response
 
-# from packet import packet
+from packet import packet
 
-code = ('INVITE')
+request_type = 'INVITE'
 sender_name = 'server1'
 domain = 'there.com'
 protocol = 'TCP'
@@ -16,13 +16,13 @@ subject = 'subject'
 content_type = 'application'
 content_sub_type = 'sdp'
 tag = '123'
-
-req = request(code, sender_name, sender_network_name, domain, protocol, port,
-              receiver_name, receiver_network_name, seq_num, subject, 
-              content_type, content_sub_type, tag)
+req = request(request_type, sender_name, sender_network_name, domain, protocol,
+              port, receiver_name, receiver_network_name, seq_num,
+              subject, content_type, content_sub_type, tag)
 print(req.get_request_packet())
+print('')
 
-code = '200'
+code = '100'
 request_type = 'INVITE'
 sender_name = 'server1'
 domain = 'there.com'
@@ -40,4 +40,5 @@ tag = '123'
 res = response(code, sender_name, sender_network_name, domain, protocol, port,
                receiver_name, receiver_network_name, seq_num, request_type,
                subject, content_type, content_sub_type, tag)
-print(res.get_response_packet())
+print(res.get_packet())
+print('')

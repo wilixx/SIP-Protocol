@@ -6,70 +6,68 @@ from string import digits
 class response(packet):
     __packet_ = None
 
-    __provisional_responses = {'EARLY DIALOG TERMINATED': '199',
-                               'CALL IS BEING FORWARDED': '181',
-                               'RINGING': '180', 'QUEUED': '182',
-                               'TRYING': '100', 'SESSION PROGRESS': '183'}
-    __successful_responses = {'NO NOTIFICATION': '204', 'ACCEPTED': '202',
-                              'OK': '200'}
-    __redirection_responses = {'MOVED PERMANENTLY': '301', 'USE PROXY': '305',
-                               'MULTIPLE CHOICES': '300',
-                               'MOVED TEMOPRARILY': '302',
-                               'ALTERNATIVE SERIVICE': '380'}
-    __client_faliure_responses = {'INVALID IDENTITY HEADER': '438',
-                                  'LENGTH REQUIRED': '411',
-                                  'REQUEST ENTITY TOO LARGE': '413',
-                                  'SECURITY AGREEMENT REQUIRED': '494',
-                                  'TEMPORARILY UNAVAILABLE': '480',
-                                  'NOT FOUND': '404', 'UNAUTHORIZED': '401',
-                                  'CONFLICT': '409', 'NOT ACCEPTABLE': '406',
-                                  'CALL/TRANSACTIONS DOES NOT EXIST': '481',
-                                  'SESSION INTERVAL TOO SMALL': '422',
-                                  'REQUEST PENDING': '491',
-                                  'UKNOWN RESOURCE PRIORITY': '417',
-                                  'GONE': '410', 'EXTENSTION REQUIRED': '421',
-                                  'BAD REQUEST': '400',
-                                  'BAD LOCATION INFORMATION': '424',
-                                  'CONSENT NEEDED': '470',
-                                  'USE IDENTITY HEADER': '428',
-                                  'PROVIDE REFERRER IDENTITY': '429',
-                                  'NOT ACCEPTABLE HERE': '488',
-                                  'UNSUPPORTED CERTIFICATE': '437',
-                                  'LOOP DETECTED': '482',
-                                  'ADDRESS INCOMPLETE': '484',
-                                  'PROXY AUTHENTICATION REQUIRED': '407',
-                                  'TOO MANY HOPS': '483',
-                                  'BAD EXTENSION': '420',
-                                  'BAD IDENTITY-INFO': '436',
-                                  'REQUEST TERMINATED': '487',
-                                  'UNDECIPHERABLE': '493', 'FORBIDDEN': '403',
-                                  'INTERVAL TOO BRIEF': '423',
-                                  'REQUEST TIMEOUT': '408',
-                                  'MAX-BREADTH EXCEEDED': '440',
-                                  'BUSY HERE': '486',
-                                  'FIRST HOP LACKS OUTBOUND SUPPORT': '439',
-                                  'UNSUPPORTED URI SCHEME': '415',
-                                  'CONDITIONAL REQUEST FAILED': '412',
-                                  'ANONIMITY DISALLOWED': '433',
-                                  'AMBIGUOUS': '485',
-                                  'PAYMENT REQUIRED': '402',
-                                  'BAD INFO PACKAGE': '469',
-                                  'BAD EVENT': '489',
-                                  'METHOD NOT ALLOWED': '405',
-                                  'REQUEST-URI TOO LONG': '414'}
-    __server_faliure_responses = {'BAD GATEWAY': '502',
-                                  'MESSAGE TO LARGE': '513',
-                                  'NOT IMPLEMENTED': '501',
-                                  'SERVICE UNAVAILABLE': '503',
-                                  'PRECONDITIONED FALIURE': '580',
-                                  'INTERNAL SERVER ERROR': '500',
-                                  'VERSION NOT SUPPORTED': '505',
-                                  'SERVER TIME-OUT': '504'}
-    __global_faliure_responses = {'BUSY EVERYWHERE': '600',
-                                  'NOT ACCEPTABLE': '606',
-                                  'DECLINE': '603',
-                                  'DOES NOT EXIST ANYWHERE': '604',
-                                  'UNWANTED': '607'}
+    __provisional_responses = {'100': 'TRYING', '182': 'QUEUED',
+                               '180': 'RINGING',
+                               '199': 'EARLY DIALOG TERMINATED',
+                               '183': 'SESSION PROGRESS',
+                               '181': 'CALL IS BEING FORWARDED'}
+    __successful_responses = {'202': 'ACCEPTED', '200': 'OK',
+                              '204': 'NO NOTIFICATION'}
+    __redirection_responses = {'300': 'MULTIPLE CHOICES',
+                               '302': 'MOVED TEMOPRARILY',
+                               '380': 'ALTERNATIVE SERIVICE',
+                               '301': 'MOVED PERMANENTLY', '305': 'USE PROXY'}
+    __client_faliure_responses = {'412': 'CONDITIONAL REQUEST FAILED',
+                                  '482': 'LOOP DETECTED', '400': 'BAD REQUEST',
+                                  '408': 'REQUEST TIMEOUT',
+                                  '406': 'NOT ACCEPTABLE',
+                                  '405': 'METHOD NOT ALLOWED',
+                                  '428': 'USE IDENTITY HEADER',
+                                  '422': 'SESSION INTERVAL TOO SMALL',
+                                  '420': 'BAD EXTENSION', '403': 'FORBIDDEN',
+                                  '438': 'INVALID IDENTITY HEADER',
+                                  '484': 'ADDRESS INCOMPLETE',
+                                  '494': 'SECURITY AGREEMENT REQUIRED',
+                                  '433': 'ANONIMITY DISALLOWED',
+                                  '413': 'REQUEST ENTITY TOO LARGE',
+                                  '436': 'BAD IDENTITY-INFO',
+                                  '440': 'MAX-BREADTH EXCEEDED',
+                                  '401': 'UNAUTHORIZED', '489': 'BAD EVENT',
+                                  '421': 'EXTENSTION REQUIRED',
+                                  '439': 'FIRST HOP LACKS OUTBOUND SUPPORT',
+                                  '480': 'TEMPORARILY UNAVAILABLE',
+                                  '491': 'REQUEST PENDING', '404': 'NOT FOUND',
+                                  '423': 'INTERVAL TOO BRIEF',
+                                  '429': 'PROVIDE REFERRER IDENTITY',
+                                  '415': 'UNSUPPORTED URI SCHEME',
+                                  '470': 'CONSENT NEEDED',
+                                  '487': 'REQUEST TERMINATED',
+                                  '410': 'GONE', '493': 'UNDECIPHERABLE',
+                                  '485': 'AMBIGUOUS', '483': 'TOO MANY HOPS',
+                                  '402': 'PAYMENT REQUIRED',
+                                  '414': 'REQUEST-URI TOO LONG',
+                                  '424': 'BAD LOCATION INFORMATION',
+                                  '486': 'BUSY HERE',
+                                  '488': 'NOT ACCEPTABLE HERE',
+                                  '411': 'LENGTH REQUIRED', '409': 'CONFLICT',
+                                  '481': 'CALL/TRANSACTIONS DOES NOT EXIST',
+                                  '437': 'UNSUPPORTED CERTIFICATE',
+                                  '469': 'BAD INFO PACKAGE',
+                                  '417': 'UKNOWN RESOURCE PRIORITY',
+                                  '407': 'PROXY AUTHENTICATION REQUIRED'}
+    __server_faliure_responses = {'505': 'VERSION NOT SUPPORTED',
+                                  '580': 'PRECONDITIONED FALIURE',
+                                  '500': 'INTERNAL SERVER ERROR',
+                                  '513': 'MESSAGE TO LARGE',
+                                  '504': 'SERVER TIME-OUT',
+                                  '503': 'SERVICE UNAVAILABLE',
+                                  '501': 'NOT IMPLEMENTED',
+                                  '502': 'BAD GATEWAY'}
+    __global_faliure_responses = {'604': 'DOES NOT EXIST ANYWHERE',
+                                  '607': 'UNWANTED',
+                                  '606': 'NOT ACCEPTABLE',
+                                  '600': 'BUSY EVERYWHERE', '603': 'DECLINE'}
+
     __responses = [__provisional_responses, __successful_responses,
                    __redirection_responses, __client_faliure_responses,
                    __server_faliure_responses, __global_faliure_responses]
@@ -87,12 +85,9 @@ class response(packet):
     def __add_uri(self, code):
         response_code = int(code)
         find_response = int(response_code/100) - 1
-        res = self.__responses[find_response].get('OK')
-        print(res)
-        # response_type = self.__responses[find_response][response_code]
-        response_code = code
-        self.__packet_ = 'SIP/2.0 ' + response_code + ' ' + response_type + \
+        response_type = self.__responses[find_response][code]
+        self.__packet_ = 'SIP/2.0 ' + code + ' ' + response_type + \
                          self.__packet_.get_packet()
 
     def get_packet(self):
-        return self.__packet_.get_packet()
+        return self.__packet_
