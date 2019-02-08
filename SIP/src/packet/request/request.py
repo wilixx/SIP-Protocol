@@ -19,5 +19,5 @@ class request(packet):
         self.__packet_ = request_type + ' sip:' + receiver_name + \
             '@' + domain + ' SIP/2.0' + self.__packet_.get_packet()
 
-    def get_request_packet(self):
+    def get_packet(self):
         return self.__packet_
