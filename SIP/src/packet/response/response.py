@@ -3,7 +3,7 @@ from random import choice
 from string import digits
 
 
-class response(packet):
+class response:
     __packet_ = None
 
     __provisional_responses = {'100': 'TRYING', '182': 'QUEUED',

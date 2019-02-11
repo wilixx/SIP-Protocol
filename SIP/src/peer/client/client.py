@@ -1,7 +1,7 @@
-from src.peer import peer
+from peer import peer
 
 
-class client(peer):
+class client:
     __peer_ = None
     __client_socket_ = None
     __client_address = ()

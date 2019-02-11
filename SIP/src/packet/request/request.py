@@ -1,7 +1,7 @@
 from packet import packet
 
 
-class request(packet):
+class request:
     __packet_ = None
 
     __requests = ['INVITE', 'BYE', 'REGISTER', 'ACK']

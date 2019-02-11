@@ -42,7 +42,7 @@ class testPeer(unittest.TestCase):
         peer_ = peer('UDP')
         client_addr = ('127.0.0.1', '60000')
         peer_._socket_connect(client_addr)
-        
+
     def test_socket_listen(self):
         # Test socket listen using TCP
         peer_ = peer()

@@ -5,6 +5,7 @@ from peer.server.server import server
 from src import request_packet, response_packet
 from src.database import database # Change directory to database_tests
 
+
 class registerar(server):
     __s = None
     __db = None
@@ -17,7 +18,8 @@ class registerar(server):
     __content_type = ''
     __content_sub_type = ''
 
-    def __init__(self, server_name, domain, server_network_name, content_type, content_sub_type, protocol='TCP', port=6050):
+    def __init__(self, server_name, domain, server_network_name, content_type, 
+                 content_sub_type, protocol='TCP', port=6050):
         self.__initialize_db()
         self.__set_server_name(server_name)
         self.__set_domain(domain)
@@ -27,7 +29,8 @@ class registerar(server):
         self.__set_protocol(protocol)
         self.__set_port(port)
         self.__s = server(6050)
-        self.__s._create_server((self._register_server.__name__, self._register_server))
+        self.__s._create_server((self._register_server.__name__,
+                                 self._register_server))
 
     def _register_server(self, client_socket):
         message = self.__s._receive_message(client_socket)

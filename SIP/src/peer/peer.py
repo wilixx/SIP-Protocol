@@ -1,5 +1,6 @@
 import socket
 
+
 class peer:
 
     __db = None
@@ -25,20 +26,20 @@ class peer:
                 print('Unable to initialize socket')
                 exit(0)
 
-    def _socket_bind(self, server_address):
+    def socket_bind(self, server_address):
         self.__s.bind(server_address)
 
-    def _socket_listen(self, backlog):
+    def socket_listen(self, backlog):
         self.__s.listen(backlog)
 
-    def _socket_accept(self):
+    def socket_accept(self):
         (client_socket, addr) = self.__s.accept()
         return (client_socket, addr)
 
-    def _socket_connect(self, client_address):
+    def socket_connect(self, client_address):
         self.__s.connect(client_address)
 
-    def _socket_close(self):
+    def socket_close(self):
         self.__s.close()
 
     def server_send_message(self, message):
@@ -60,29 +61,18 @@ class peer:
     def __set_protocol(self, protocol):
         self.__protocol = protocol
 
-    def get_protocol(self):
+    def _get_protocol(self):
         return self.__protocol
 
     def __set_port(self, port):
         self.__port = port
 
-    def get_port(self):
+    def _get_port(self):
         return self.__port
 
     def __set_s_address(self):
-        self.__s_address = (socket.gethostbyname(socket.gethostname()), self.get_port())
+        self.__s_address = (socket.gethostbyname(socket.gethostname()),
+                            self.get_port())
 
-    def get_s_address(self):
+    def _get_s_address(self):
         return self.__s_address
-
-    def __set_max_num_of_clients(self, max_num_of_clients):
-        self.__max_num_of_clients = max_num_of_clients
-
-    def get_max_num_of_clients(self):
-        return self.__max_num_of_clients
-
-    def __set_buff_size(self, buff_size):
-        self.__buff_size = buff_size
-
-    def get_buff_size(self):
-        return self.__buff_size

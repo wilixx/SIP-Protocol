@@ -18,7 +18,7 @@ class payload:
         self.__payload += 'v=' + version + '\r\n'
 
     def __add_owner_details(self, sender_name, session_id, country_code,
-                            ip_type, domain):
+                            ip_type, domain):  # Generation of session id
         self.__payload += 'o=' + sender_name + ' ' + session_id + ' ' + \
                           country_code + ' ' + ip_type + ' ' + domain + '\r\n'
 
