@@ -37,15 +37,15 @@ class payload:
         self.__payload += 'm=' + media_type + ' ' + protocol + ' ' + \
                           media_transfer_type + '\r\n'
 
-    def __add_session_attributes(self, protocol, port, modulation_type,
+    def __add_session_attributes(self, protocol_id, port, modulation_type,
                                  modulation_port):
         self.__payload += 'a=' + protocol + ':' + port + ' ' + \
                          modulation_type + '/' + modulation_port
 
     def __make_payload(self, version, sender_name, session_id, country_code,
                        ip_type, domain, ip_address, media_type, protocol_id,
-                       media_transfer_type, protocol, port, communication_port,
-                       transfer_port, session_name='SESSION SDP'):
+                       media_transfer_type, protocol, port, modulation_type,
+                       modulation_port, session_name='SESSION SDP'):
         self.__add_version(version)
         self.__add_owner_details(sender_name, session_id, country_code,
                                  ip_type, domain)
