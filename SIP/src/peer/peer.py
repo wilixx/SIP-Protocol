@@ -17,17 +17,17 @@ class peer:
         self.__set_s_address()
 
     def __initialize_socket(self):
-        if self.get_protocol() == 'TCP':
-            self.__s = self.__s.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if self._get_protocol() == 'TCP':
+            self.__s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         else:
-            if self.get_protocol() == 'UDP':
-                self.__s = self.__s.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            if self._get_protocol() == 'UDP':
+                self.__s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             else:
                 print('Unable to initialize socket')
                 exit(0)
 
-    def socket_bind(self, server_address):
-        self.__s.bind(server_address)
+    def socket_bind(self):
+        self.__s.bind(self._get_s_address())
 
     def socket_listen(self, backlog):
         self.__s.listen(backlog)
@@ -36,25 +36,25 @@ class peer:
         (client_socket, addr) = self.__s.accept()
         return (client_socket, addr)
 
-    def socket_connect(self, client_address):
-        self.__s.connect(client_address)
+    def socket_connect(self, server_address):
+        self.__s.connect(server_address)
 
     def socket_close(self):
         self.__s.close()
 
-    def server_send_message(self, message):
+    def client_send_message(self, message):
         message = message.encode('UTF-8')
         self.__s.send(message)
 
-    def server_receive_message(self):
+    def client_receive_message(self):
         message = self.__s.recv(self.get_buff_size()).decode('UTF-8')
         return message
 
-    def client_send_message(self, client_socket, message):
+    def server_send_message(self, client_socket, message):
         message = message.encode('UTF-8')
         client_socket.send(message)
 
-    def client_receive_message(self, client_socket):
+    def server_receive_message(self, client_socket):
         message = client_socket.recv(self.get_buff_size()).decode('UTF-8')
         return message
 
@@ -72,7 +72,7 @@ class peer:
 
     def __set_s_address(self):
         self.__s_address = (socket.gethostbyname(socket.gethostname()),
-                            self.get_port())
+                            self._get_port())
 
     def _get_s_address(self):
         return self.__s_address

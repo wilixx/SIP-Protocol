@@ -3,9 +3,8 @@ from peer import peer
 
 class server:
     __peer_ = None
-    __server_address = ()
     __max_num_of_clients = 1
-    __buff_size = 8192
+    __buff_size = 4096
 
     __server_name = ''
     __domain = ''
@@ -15,38 +14,50 @@ class server:
     __content_type = ''
     __content_sub_type = ''
 
-    def __init__(self, server_name, domain, port, server_network_name,
-                 content_type, content_sub_type, max_num_of_clients=1,
-                 buff_size=8192):
-        self.__peer_ = peer('TCP', 6050)
+    def __init__(self, server_name, domain, protocol, port,
+                 server_network_name, content_type, content_sub_type,
+                 max_num_of_clients=1, buff_size=4096):
+        self.__peer_ = peer(protocol, int(port))
         self.__set_max_num_of_clients(max_num_of_clients)
         self.__set_buff_size(buff_size)
-        self.__set_server_address()
         self.__set_server_name(server_name)
         self.__set_domain(domain)
+        self.__set_protocol(protocol)
         self.__set_port(port)
         self.__set_server_network_name(server_network_name)
         self.__set_content_type(content_type)
         self.__set_content_sub_type(content_sub_type)
 
     def create_server(self, func):
-        print('Started server at address:' + str(self._get_server_address()))
-        self.__peer_._socket_bind(self._get_server_address())
-        self._socket_listen(self._get_max_num_of_clients())
+        print('Started server at address:' + str(self.__peer_._get_s_address()))
+        self.__peer_.socket_bind()
+        self.__peer_.socket_listen(self._get_max_num_of_clients())
         try:
             while True:
-                (client_socket, addr) = self._socket_accept()
+                (client_socket, addr) = self.__peer_.socket_accept()
                 self._exec_func(func, client_socket)
         except KeyboardInterrupt:
             print('Closed socket')
         finally:
-            self._socket_close()
+            self.__peer_.socket_close()
 
-    def _exec_func(self, func, client_socket):
-        if func[0] == '_register_server':
-            return func[1](client_socket)
-        else:
-            return func[1](client_socket, 'bat', 'bat')
+    def register_client(self, username, password):
+        # Save to database
+        print('')
+
+    def deregister_client(self, username):
+        # Remove from database
+        print('')
+
+    def establish_client_session(self, username):
+        # Establish session with client
+        print('')
+
+    '''def _exec_func(self, func, client_socket):
+        if func.__name__ == 'register_server':
+            return func(client_socket)
+        if func.__name__ == 'save_file':  # To receive file
+            return func(client_socket, 'audio', 'mp3')'''
 
     def __set_server_name(self, server_name):
         self.__server_name = server_name
@@ -84,6 +95,12 @@ class server:
     def get_port(self):
         return self.__port
 
+    def __set_protocol(self, protocol):
+        self.__protocol = protocol
+
+    def get_protocol(self):
+        return self.__protocol
+
     def __set_max_num_of_clients(self, max_num_of_clients):
         self.max_num_of_clients = max_num_of_clients
 
@@ -95,9 +112,3 @@ class server:
 
     def _get_buff_size(self):
         return self.buff_size
-
-    def __set_server_address(self):
-        self.__server_address = self.__peer_.get_s_address()
-
-    def _get_server_address(self):
-        return self.__server_address
