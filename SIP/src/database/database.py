@@ -6,11 +6,23 @@ import sys
 
 class database:
 
-    __tables = ['clients', 'transfer_records']
-    __client_columns = ['username', 'password']
-    __transfer_records_columns = ['sender_name', 'receiver_name', 'sender_ip',
-                                  'receiver_ip', 'media_type', 'media_name',
-                                  'date_of_transfer', 'time_of_transfer']
+    __tables = ['client_data', 'transfer_records']
+    __client_data_column_types = [('id', 'int', 'PRIMARY KEY'),
+                                  ('username', 'text', 'NOT NULL'),
+                                  ('password', 'text', 'NOT NULL')]
+    __transfer_records_column_types = [('id', 'int', 'PRIMARY KEY'),
+                                       ('sender_name', 'text', 'NOT NULL'),
+                                       ('receiver_name', 'text', 'NOT NULL'),
+                                       ('sender_ip', 'text', 'NOT NULL'),
+                                       ('receiver_ip', 'text', 'NOT NULL'),
+                                       ('media_type', 'text', 'NOT NULL'),
+                                       ('media_name', 'text', 'NOT NULL'),
+                                       ('date', 'text', 'NOT NULL'),
+                                       ('time', 'text', 'NOT NULL')]
+
+    __client_data_columns = [x[0] for x in __client_data_column_types]
+    __transfer_records_columns = [x[0] for x in __transfer_records_column_types]
+
     __table_name = None
     __columns = None
     __conn = None
@@ -18,14 +30,14 @@ class database:
 
     __statement = ''
 
-    def __init__(self, table_name, columns):
-        db_file = 'clients.db'
+    def __init__(self, table_name):
+        db_file = 'C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src\\database\\clients.db'  # Fix folder location
         self.__conn = connect(db_file)
         self.__c = self.__conn.cursor()
         if not exists(db_file):
             self.__create_database(db_file)
-        self.__set_table_name(table_name, columns)
-        self.__set_columns(table_name, columns)
+        self.__set_table_name(table_name)
+        self.__set_columns()
         self.__conn = connect(db_file)
         self.__c = self.__conn.cursor()
         print('Connected to database')
@@ -34,21 +46,25 @@ class database:
         file = open(file_name, 'w')
         file.close()
 
-    def __set_table_name(self, table_name, columns):
+    def __set_table_name(self, table_name):
         self.__statement = 'SELECT name from sqlite_master WHERE type=\"table\"'
         tables = self.__execute_query()
         if len(tables) > 0:
-            if table_name in tables:
-                self.__table_name = table_name
+            for table in tables:
+                if table_name in table[0]:
+                    self.__table_name = table_name
         else:
-            self.__create_table(table_name, columns)
             self.__table_name = table_name
+            if table_name == 'client_data':
+                self.__create_table(self.__client_data_column_types)
+            if table_name == 'transfer_records':
+                self.__create_table(self.__transfer_records_column_types)
 
-    def __set_columns(self, table_name, columns):
-        get_columns_query = 'PRAGMA table_info(' + table_name + ')'
-        self.__statement = get_columns_query
-        rows = self.__execute_query()
-        self.__columns = columns
+    def __set_columns(self):
+        if self.__table_name == 'client_data':
+            self.__columns = self.__client_data_columns
+        if self.__table__name == 'transfer_records':
+            self.__columns = self.__transfer_records_columns
 
     def __execute_query(self):
         try:
@@ -68,8 +84,10 @@ class database:
         else:
             for column in columns:
                 print_statement += column + ','
-            print_statement = print_statement.rstrip(', ')
+            print_statement = print_statement.rstrip(', ') + ' FROM ' + \
+                self.__table_name
         self.__statement = print_statement
+        return self.__execute_query()
 
     def insert_records(self, values):
         insert_statement = 'INSERT INTO ' + self.__table_name + ' VALUES('
@@ -77,6 +95,7 @@ class database:
             insert_statement += '\'' + value + '\','
         insert_statement = insert_statement.rstrip(',') + ')'
         self.__statement = insert_statement
+        return self.__execute_query()
 
     def update_records(self, current_values={}, update_values={}):
         update_statement = 'UPDATE ' + self.__table_name + ' SET '
@@ -87,6 +106,7 @@ class database:
             update_statement += key + '=\'' + value + '\' AND '
         update_statement = update_statement.rstrip(' AND ')
         self.__statement = update_statement
+        return self.__execute_query()
 
     def delete_records(self, values={}):
         delete_statement = 'DELETE FROM ' + self.__table_name + ' WHERE '
@@ -94,11 +114,22 @@ class database:
             delete_statement += key + '=\'' + value + '\' AND '
         delete_statement = delete_statement.rstrip(' AND ')
         self.__statement = delete_statement
+        return self.__execute_query()
 
-    def __create_table(self, table_name, columns):
-        create_statement = 'CREATE TABLE ' + table_name + ' ('
-        for column in columns:
-            create_statement += column + ' text,'
+    def __create_table(self, columns):
+        create_statement = 'CREATE TABLE ' + 'transfer_records' + ' ('
+        for column, data_type, constraint in columns:
+            create_statement += column + ' ' + data_type + ' ' + constraint + ','
         create_statement = create_statement.rstrip(',')
         create_statement += ')' + ";"
         self.__statement = create_statement
+        print(self.__table__name + ' created')
+        return self.__execute_query()
+
+
+    '''def __set_columns(self, columns):  # When columns are not hard-coded
+        get_columns_query = 'PRAGMA table_info(' + self.__table_name + ')'
+        self.__statement = get_columns_query
+        rows = self.__execute_query()
+        rows = [row[0] for row in rows]
+        self.__columns = columns'''
