@@ -55,7 +55,7 @@ class peer:
         client_socket.send(message)
 
     def server_receive_message(self, client_socket):
-        message = client_socket.recv(self.get_buff_size()).decode('UTF-8')
+        message = client_socket.recv(4096).decode('UTF-8')  # Edit buff size
         return message
 
     def __set_protocol(self, protocol):

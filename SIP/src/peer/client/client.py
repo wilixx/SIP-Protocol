@@ -1,4 +1,7 @@
 from peer import peer
+import sys
+sys.path.append('C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src\\packet\\')
+from request import request
 
 
 class client:
@@ -34,11 +37,13 @@ class client:
         self.__peer_.socket_connect(server_address)
 
     def register_client(self):
-        message = 'Register ' + self.get_username()
+        request_ = request.request('REGISTER', '999', '999', '192.168.1.218', 'TCP', '6050', '8007', '8007', '1', 'REGISTER', 'application', 'sdp', '123')
+        message = request_.get_packet()
         self.__peer_.client_send_message(message)
 
     def deregister_client(self):
-        message = 'Deregister ' + self.get_username()
+        request_ = request.request('REGISTER', '999', '999', '192.168.1.218', 'TCP', '6050', '8007', '8007', '1', 'REGISTER', 'application', 'sdp', '123')
+        message = request_.get_packet()
         self.__peer_.client_send_message(message)
 
     def disconnect_client(self):

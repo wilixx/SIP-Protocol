@@ -28,36 +28,40 @@ class server:
         self.__set_content_type(content_type)
         self.__set_content_sub_type(content_sub_type)
 
-    def create_server(self, func):
+    def create_server(self):
         print('Started server at address:' + str(self.__peer_._get_s_address()))
         self.__peer_.socket_bind()
         self.__peer_.socket_listen(self._get_max_num_of_clients())
         try:
             while True:
-                (client_socket, addr) = self.__peer_.socket_accept()
-                self._exec_func(func, client_socket)
+                (client_socket, addr) = self.__peer_.socket_accept()  # Create new thread for each client
+                register_packet = self.__peer_.server_receive_message(client_socket)
+                self.register_client(register_packet)
+                # self._exec_func(func, client_socket)
         except KeyboardInterrupt:
             print('Closed socket')
         finally:
             self.__peer_.socket_close()
 
-    def register_client(self, username, password):
-        # Save to database
-        print('')
+    def register_client(self, register_packet):
+        # Save to database  # Have to edit from here
+        print(register_packet)
 
     def deregister_client(self, username):
         # Remove from database
-        print('')
+        if username == '8007':
+            print('Client deregistered')
+            print('')
 
     def establish_client_session(self, username):
         # Establish session with client
         print('')
 
-    '''def _exec_func(self, func, client_socket):
+    def _exec_func(self, func, client_socket):
         if func.__name__ == 'register_server':
             return func(client_socket)
         if func.__name__ == 'save_file':  # To receive file
-            return func(client_socket, 'audio', 'mp3')'''
+            return func(client_socket, 'audio', 'mp3')
 
     def __set_server_name(self, server_name):
         self.__server_name = server_name
