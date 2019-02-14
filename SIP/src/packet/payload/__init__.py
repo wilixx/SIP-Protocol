@@ -1,4 +1,4 @@
-import sys
+'''import sys
 sys.path.append('C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src\\packet\\payload')
 from payload import payload
 
@@ -21,4 +21,4 @@ payload_ = payload(version, sender_name, session_id, country_code,
                    ip_type, domain, ip_address, media_type, protocol_id,
                    media_transfer_type, protocol, port, communication_port,
                    transfer_port, session_name)
-print(payload_.get_payload())
+print(payload_.get_payload())'''

@@ -39,7 +39,7 @@ class payload:
 
     def __add_session_attributes(self, protocol_id, port, modulation_type,
                                  modulation_port):
-        self.__payload += 'a=' + protocol + ':' + port + ' ' + \
+        self.__payload += 'a=' + protocol_id + ':' + port + ' ' + \
                          modulation_type + '/' + modulation_port
 
     def __make_payload(self, version, sender_name, session_id, country_code,
@@ -53,5 +53,5 @@ class payload:
         self.__add_time_details('0', '0')
         self.__add_contact_details(country_code, ip_type, ip_address)
         self.__add_media_details(media_type, protocol_id, media_transfer_type)
-        self.__add_session_attributes(protocol, port, communication_port,
-                                      transfer_port)
+        self.__add_session_attributes(protocol, port, modulation_type,
+                                      modulation_port)
