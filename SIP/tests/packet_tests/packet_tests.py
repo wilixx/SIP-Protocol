@@ -103,5 +103,6 @@ class packet_test(unittest.TestCase):
         self.assertEqual(sample_payload, test_payload)
 
 if __name__ == '__main__':
-    logger.get_log_file_name('packet_test_log.log')
+    logger.set_logger_name('Packets Logger')
+    logger.get_log_file_name('packet_test.log')
     unittest.main()
