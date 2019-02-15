@@ -8,15 +8,17 @@ password = 'password'
 client_name = 'client'
 domain = 'there.com'
 protocol = 'TCP'
-port = '6050'
+port = '5060'
 client_network_name = 'CLIENT'
 content_type = 'application'
 content_sub_type = 'sdp'
 
-client_ = client(username, password, client_name, domain, protocol, port, client_network_name, content_type, content_sub_type)
-client_.connect_to_server(('192.168.1.218', 6050))  # Obtain server IP???
-print('Registering client')
-client_.register_client()
-print('Deregistering client')
-client_.deregister_client()
-client_.disconnect_client()
+client_ = client(username, password, client_name, domain, protocol, port,
+                 client_network_name, content_type, content_sub_type)
+client_.__s.sendto('hello', ('169.254.6.205', 5060))
+#client_.connect_to_server(('169.254.6.205', 5060))  # Obtain server IP???
+#print('Registering client')
+#client_.register_client()
+#print('Deregistering client')
+#client_.deregister_client()
+#client_.disconnect_client()

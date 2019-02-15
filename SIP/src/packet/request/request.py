@@ -19,5 +19,8 @@ class request:
         self.__packet_ = request_type + ' sip:' + receiver_name + \
             '@' + domain + ' SIP/2.0' + self.__packet_.get_packet()
 
+    # def __add_authorization(self, username, password, ):  # Can add authorization later on
+    #    self.__packet_ = 
+
     def get_packet(self):
         return self.__packet_

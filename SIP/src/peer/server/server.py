@@ -1,10 +1,9 @@
-from peer import peer
+from peer.peer import peer
 
 
 class server:
     __peer_ = None
     __max_num_of_clients = 1
-    __buff_size = 4096
 
     __server_name = ''
     __domain = ''
@@ -16,10 +15,9 @@ class server:
 
     def __init__(self, server_name, domain, protocol, port,
                  server_network_name, content_type, content_sub_type,
-                 max_num_of_clients=1, buff_size=4096):
+                 max_num_of_clients=1):
         self.__peer_ = peer(protocol, int(port))
         self.__set_max_num_of_clients(max_num_of_clients)
-        self.__set_buff_size(buff_size)
         self.__set_server_name(server_name)
         self.__set_domain(domain)
         self.__set_protocol(protocol)
@@ -28,40 +26,34 @@ class server:
         self.__set_content_type(content_type)
         self.__set_content_sub_type(content_sub_type)
 
-    def create_server(self):
+    def create_server(self, func):
         print('Started server at address:' + str(self.__peer_._get_s_address()))
         self.__peer_.socket_bind()
-        self.__peer_.socket_listen(self._get_max_num_of_clients())
+        if self.get_protocol() == 'TCP':
+            self.__peer_.socket_listen(self._get_max_num_of_clients())
         try:
             while True:
-                (client_socket, addr) = self.__peer_.socket_accept()  # Create new thread for each client
-                register_packet = self.__peer_.server_receive_message(client_socket)
-                self.register_client(register_packet)
-                # self._exec_func(func, client_socket)
+                if self.get_protocol() == 'TCP':
+                    (client_socket, addr) = self.__peer_.socket_accept()  # Create new thread for each client
+                    self._exec_func(func, client_socket)
+                if self.get_protocol() == 'UDP':
+                    self._exec_func(func)
         except KeyboardInterrupt:
             print('Closed socket')
         finally:
             self.__peer_.socket_close()
 
-    def register_client(self, register_packet):
-        # Save to database  # Have to edit from here
-        print(register_packet)
-
-    def deregister_client(self, username):
-        # Remove from database
-        if username == '8007':
-            print('Client deregistered')
-            print('')
-
-    def establish_client_session(self, username):
-        # Establish session with client
-        print('')
-
-    def _exec_func(self, func, client_socket):
+    def _exec_func(self, func, client_socket=None):
         if func.__name__ == 'register_server':
-            return func(client_socket)
-        if func.__name__ == 'save_file':  # To receive file
-            return func(client_socket, 'audio', 'mp3')
+            if client_socket is None:
+                return func()
+            else:
+                return func(client_socket)
+
+    def receive_message(self, client_socket=None):
+        protocol = self.get_protocol()
+        message = self.__peer_.server_receive_message(client_socket)
+        return message
 
     def __set_server_name(self, server_name):
         self.__server_name = server_name
@@ -110,9 +102,3 @@ class server:
 
     def _get_max_num_of_clients(self):
         return self.max_num_of_clients
-
-    def __set_buff_size(self, buff_size):
-        self.buff_size = buff_size
-
-    def _get_buff_size(self):
-        return self.buff_size

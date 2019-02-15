@@ -9,10 +9,12 @@ class peer:
     __protocol = ''
     __port = 6050
     __s_address = ()
+    __buff_size = 4096
 
-    def __init__(self, protocol='TCP', port=6050):
+    def __init__(self, protocol='TCP', port=6050, buff_size=4096):
         self.__set_protocol(protocol)
         self.__set_port(port)
+        self.__set_buff_size(buff_size)
         self.__initialize_socket()
         self.__set_s_address()
 
@@ -42,21 +44,33 @@ class peer:
     def socket_close(self):
         self.__s.close()
 
-    def client_send_message(self, message):
+    def client_send_message(self, message, protocol, address=None):
         message = message.encode('UTF-8')
-        self.__s.send(message)
+        if protocol == 'TCP':
+            self.__s.send(message)
+        if protocol == 'UDP':
+            self.__s.sendto(message, address)
 
-    def client_receive_message(self):
-        message = self.__s.recv(self.get_buff_size()).decode('UTF-8')
+    def client_receive_message(self, protocol):
+        if protocol == 'TCP':
+            message = self.__s.recv(self._get_buff_size()).decode('UTF-8')
+        if protocol == 'UDP':
+            message = self.__s.recvfrom(self._get_buff_size()).decode('UTF-8')
         return message
 
-    def server_send_message(self, client_socket, message):
+    def server_send_message(self, client_socket, protocol, message):
         message = message.encode('UTF-8')
-        client_socket.send(message)
+        if protocol == 'TCP':
+            client_socket.send(message)
+        if protocol == 'UDP':
+            client_socket.sendto(message)
 
-    def server_receive_message(self, client_socket):
-        message = client_socket.recv(4096).decode('UTF-8')  # Edit buff size
-        return message
+    def server_receive_message(self, client_socket=None):
+        if client_socket is None:
+            message, addr = self.__s.recvfrom(self._get_buff_size())
+        else:
+            message = client_socket.recv(self._get_buff_size())
+        return message.decode('UTF-8')
 
     def __set_protocol(self, protocol):
         self.__protocol = protocol
@@ -69,6 +83,12 @@ class peer:
 
     def _get_port(self):
         return self.__port
+
+    def __set_buff_size(self, buff_size):
+        self.__buff_size = buff_size
+
+    def _get_buff_size(self):
+        return self.__buff_size
 
     def __set_s_address(self):
         self.__s_address = (socket.gethostbyname(socket.gethostname()),
