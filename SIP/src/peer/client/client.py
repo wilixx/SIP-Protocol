@@ -16,12 +16,13 @@ class client:
     __domain = ''
     __port = ''
     __protocol = ''
+    __rinstance = ''
     __client_network_name = ''
     __content_type = ''
     __content_sub_type = ''
 
     def __init__(self, username, password, client_name, domain, protocol,
-                 port, client_network_name, content_type, content_sub_type):
+                 port, rinstance, client_network_name, content_type, content_sub_type):
         self.__peer_ = peer(protocol, int(port))  # Protcol and port
         self.__set_username(username)
         self.__set_password(password)
@@ -29,6 +30,7 @@ class client:
         self.__set_domain(domain)
         self.__set_port(port)
         self.__set_protocol(protocol)
+        self.__set_rinstance(rinstance)
         self.__set_client_network_name(client_network_name)
         self.__set_content_type(content_type)
         self.__set_content_sub_type(content_sub_type)
@@ -84,6 +86,12 @@ class client:
 
     def get_port(self):
         return self.__port
+
+    def __set_port(self, rinstance):
+        self.__rinstance = rinstance
+
+    def get_port(self):
+        return self.__rinstance
 
     def __set_client_network_name(self, client_network_name):
         self.__client_network_name = client_network_name

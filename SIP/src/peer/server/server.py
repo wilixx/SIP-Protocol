@@ -50,6 +50,10 @@ class server:
             else:
                 return func(client_socket)
 
+    def send_message(self, client_socket, message):
+        protocol = self.get_protocol()
+        self.__peer_.server_send_message(client_socket, protocol, message)
+
     def receive_message(self, client_socket=None):
         protocol = self.get_protocol()
         message = self.__peer_.server_receive_message(client_socket)

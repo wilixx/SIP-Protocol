@@ -58,12 +58,13 @@ class peer:
             message = self.__s.recvfrom(self._get_buff_size()).decode('UTF-8')
         return message
 
-    def server_send_message(self, client_socket, protocol, message):
+    def server_send_message(self, protocol, message, client_socket=None,
+                            address=None):
         message = message.encode('UTF-8')
         if protocol == 'TCP':
             client_socket.send(message)
         if protocol == 'UDP':
-            client_socket.sendto(message)
+            self.__s.sendto(message, address)
 
     def server_receive_message(self, client_socket=None):
         if client_socket is None:

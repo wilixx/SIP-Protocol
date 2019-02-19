@@ -1,10 +1,11 @@
 import sys
 sys.path.append('C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src')
+sys.path.append('C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src\\packet\\response')
 from random import choice
 from string import digits
 from peer.server.server import server
 from packet.request import request
-from packet.response import response
+from packet.response.response import response
 from database import database
 
 
@@ -22,8 +23,37 @@ class registerar(server):
 
     def register_server(self, client_socket=None):
         message = self.__server_.receive_message(None)
-        message = message.split('\n')
+        print('Register message: ')
         print(message)
+        headers = message.split('\n')
+        code = '200'
+        sender_name = headers[5].split('@')[1].split('>')[0]
+        sender_network_name = headers[5].split('@')[0].split(':')[2]
+        domain = headers[0].split(':')[1].split(' ')[0]
+        protocol = headers[1].split(' ')[1].split('/')[2]
+        port = headers[3].split(':')[3].split(';')[0]
+        receiver_name = headers[4].split('@')[1].split('>')[0]
+        receiver_network_name = headers[4].split('@')[0].split(':')[2]
+        seq_num = headers[7].split(':')[1].split(' ')[1]
+        call_id = headers[6].split(': ')[1]
+        request_type = headers[7].split(':')[1].split(' ')[2].split('\'')[0]
+        rinstance = headers[3].split('=')[1].split('>')[0]
+        branch = headers[1].split(';')[1] + headers[1].split(';')[2] + port
+        subject = 'OK'
+        content_type = 'application'
+        content_sub_type = 'sdp'
+        from_tag = headers[5].split('=')[1]
+        to_tag = 'awdvsd6676'
+        response_ = response(code, sender_name, sender_network_name,
+                             domain, protocol, port, rinstance, branch,
+                             receiver_name, receiver_network_name, seq_num,
+                             call_id, request_type, subject, content_type,
+                             content_sub_type, from_tag, to_tag)
+        response_ = response_.get_packet()
+        address = (sender_name, port)
+        print('OK message')
+        print(response_)
+        #self.__server_.send_message(response_, address)
         '''if message[:8] == 'REGISTER':
             client_name = message.split('From')[1].split('<sip:')[1].split('@')[0]
             client_network_name = message.split('From')[1].split('<sip:')[0].split(' ')[1]
