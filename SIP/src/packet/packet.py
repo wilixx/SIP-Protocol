@@ -9,23 +9,6 @@ class packet:
                  port, rinstance, branch, receiver_name, receiver_network_name,
                  seq_num, request_type, call_id, subject,
                  content_type, content_sub_type, from_tag, to_tag):
-        '''print(sender_name)
-        print(sender_network_name)
-        print(domain)
-        print(protocol)
-        print(port)
-        print(rinstance)
-        print(branch)
-        print(receiver_name)
-        print(receiver_network_name)
-        print(seq_num)
-        print(request_type)
-        print(call_id)
-        print(subject)
-        print(content_type)
-        print(content_sub_type)
-        print(from_tag)
-        print(to_tag)'''
         self.__make_packet(sender_name, sender_network_name, domain, protocol,
                            port, rinstance, branch, receiver_name,
                            receiver_network_name, seq_num, call_id,
@@ -37,7 +20,7 @@ class packet:
 
     def __add_via(self, protocol, domain, port, branch):
         self.__packet += '\r\nVia: SIP/2.0/' + protocol + ' ' + domain + ':' + \
-            port + ';' + branch
+            port + ';' + branch[:-1] + '=' + port
 
     def __add_from(self, sender_name, sender_network_name, domain, from_tag):
         # self.__packet += '\r\nFrom: ' + sender_network_name + \
@@ -79,18 +62,22 @@ class packet:
     def __add_content_length(self):
         self.__packet += '\r\nContent-Length: 0' # + content_length  # Count the size of the packet
 
+    def __add_expires(self):
+        self.__packet += '\r\nExpires: 3600'
+
     def __make_packet(self, sender_name, sender_network_name, domain,
                       protocol, port, rinstance, branch, receiver_name,
                       receiver_network_name, seq_num, call_id, request_type,
                       subject, content_type, content_sub_type, from_tag,
                       to_tag):
         self.__add_via(protocol, domain, port, branch)
-        self.__add_from(sender_network_name, sender_name, domain, from_tag)
-        self.__add_to(receiver_network_name, receiver_name, domain, to_tag)
-        self.__add_call_id(call_id)
-        self.__add_cseq(seq_num, request_type)
-        # self.__add_subject(subject)
         self.__add_contact(receiver_network_name, receiver_name, domain, port,
                            rinstance)
+        self.__add_to(receiver_name, receiver_network_name, domain, to_tag)
+        self.__add_from(sender_name, sender_network_name, domain, from_tag)
+        self.__add_call_id(call_id)
+        self.__add_cseq(seq_num, request_type)
+        #self.__add_expires()
+        # self.__add_subject(subject)
         # self.__add_content_type(content_type, content_sub_type)
         self.__add_content_length()
