@@ -81,7 +81,7 @@ class response:
                                        branch, receiver_name,
                                        receiver_network_name, seq_num, call_id,
                                        request_type, subject, content_type,
-                                       content_sub_type, from_tag, to_tag) 
+                                       content_sub_type, from_tag, to_tag)
         self.__add_uri(code)
 
     def __add_uri(self, code):

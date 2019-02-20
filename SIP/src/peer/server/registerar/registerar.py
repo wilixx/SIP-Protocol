@@ -1,6 +1,6 @@
 import sys
-sys.path.append('C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src')
-sys.path.append('C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src\\packet\\response')
+sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src')
+sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\packet\\response')
 from random import choice
 from string import digits
 from peer.server.server import server
@@ -23,6 +23,7 @@ class registerar(server):
 
     def register_server(self, client_socket=None):
         message = self.__server_.receive_message(None)
+        print('')
         print('Register message: ')
         print(message)
         headers = message.split('\n')
@@ -38,7 +39,7 @@ class registerar(server):
         call_id = headers[6].split(': ')[1]
         request_type = headers[7].split(':')[1].split(' ')[2].split('\'')[0]
         rinstance = headers[3].split('=')[1].split('>')[0]
-        branch = headers[1].split(';')[1] + headers[1].split(';')[2] + port
+        branch = headers[1].split(';')[1] + ';' + headers[1].split(';')[2]
         subject = 'OK'
         content_type = 'application'
         content_sub_type = 'sdp'
@@ -50,23 +51,10 @@ class registerar(server):
                              call_id, request_type, subject, content_type,
                              content_sub_type, from_tag, to_tag)
         response_ = response_.get_packet()
-        address = (sender_name, port)
+        address = ('192.168.1.240', int(port))
         print('OK message')
         print(response_)
-        #self.__server_.send_message(response_, address)
-        '''if message[:8] == 'REGISTER':
-            client_name = message.split('From')[1].split('<sip:')[1].split('@')[0]
-            client_network_name = message.split('From')[1].split('<sip:')[0].split(' ')[1]
-            seq_num = int(message.split('CSeq')[1].split(' ')[1]) + 1
-            ip = client_socket.getsockname()[0]
-            self.__db._execute_statement(self.__db._insert_data(client_name, client_network_name, '', ip))
-            packet = self.ok(seq_num, client_name, client_network_name, 'REGISTER', 'REGISTER')
-            client_socket.send(packet.encode('UTF-8'))
-            print('')
-            print('Sent OK Packet to complete client registeration')
-            print('Registered client: ' + client_network_name)
-            print('')
-            self.establish_session(client_socket, seq_num, client_name, client_network_name)'''
+        self.__server_.send_message(response_, address)
 
     def _establish_session(self, client_socket, seq_num, client_name, client_network_name):
         invite_packet_a = self.__s._receive_message(client_socket)
