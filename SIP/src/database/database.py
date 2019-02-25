@@ -7,7 +7,7 @@ import sys
 class database:
 
     __tables = ['client_data', 'transfer_records']
-    __client_data_column_types = [('id', 'int', 'PRIMARY KEY'),
+    __client_data_column_types = [('id', 'int', 'PRIMARY KEY NOT NULL'),
                                   ('username', 'text', 'NOT NULL'),
                                   ('password', 'text', 'NOT NULL')]
     __transfer_records_column_types = [('id', 'int', 'PRIMARY KEY'),
@@ -31,7 +31,7 @@ class database:
     __statement = ''
 
     def __init__(self, table_name):
-        db_file = 'C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src\\database\\clients.db'  # Fix folder location
+        db_file = 'C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\database\\clients.db'  # Fix folder location
         self.__conn = connect(db_file)
         self.__c = self.__conn.cursor()
         if not exists(db_file):
@@ -63,7 +63,7 @@ class database:
     def __set_columns(self):
         if self.__table_name == 'client_data':
             self.__columns = self.__client_data_columns
-        if self.__table__name == 'transfer_records':
+        if self.__table_name == 'transfer_records':
             self.__columns = self.__transfer_records_columns
 
     def __execute_query(self):
@@ -123,13 +123,15 @@ class database:
         create_statement = create_statement.rstrip(',')
         create_statement += ')' + ";"
         self.__statement = create_statement
-        print(self.__table__name + ' created')
+        print(self.__table_name + ' created')
         return self.__execute_query()
 
 
-    '''def __set_columns(self, columns):  # When columns are not hard-coded
+    '''
+    def __set_columns(self, columns):  # When columns are not hard-coded
         get_columns_query = 'PRAGMA table_info(' + self.__table_name + ')'
         self.__statement = get_columns_query
         rows = self.__execute_query()
         rows = [row[0] for row in rows]
-        self.__columns = columns'''
+        self.__columns = columns
+    '''

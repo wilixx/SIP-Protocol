@@ -1,6 +1,7 @@
-from peer import peer
 import sys
-sys.path.append('C:\\Users\\r&dtrainee3\\Desktop\\SIP-Protocol\\SIP\\src\\packet\\')
+sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\peer')
+from peer import peer
+sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\packet\\request')
 from request import request
 
 
@@ -22,7 +23,8 @@ class client:
     __content_sub_type = ''
 
     def __init__(self, username, password, client_name, domain, protocol,
-                 port, rinstance, client_network_name, content_type, content_sub_type):
+                 port, rinstance, client_network_name, content_type,
+                 content_sub_type):
         self.__peer_ = peer(protocol, int(port))  # Protcol and port
         self.__set_username(username)
         self.__set_password(password)
@@ -38,18 +40,15 @@ class client:
     def connect_to_server(self, server_address):
         self.__peer_.socket_connect(server_address)
 
-    def register_client(self):
-        request_ = request.request('REGISTER', '999', '999', '192.168.1.218', 'TCP', '6050', '8007', '8007', '1', 'REGISTER', 'application', 'sdp', '123')
-        message = request_.get_packet()
-        self.__peer_.client_send_message(message)
-
-    def deregister_client(self):
-        request_ = request.request('REGISTER', '999', '999', '192.168.1.218', 'TCP', '6050', '8007', '8007', '1', 'REGISTER', 'application', 'sdp', '123')
-        message = request_.get_packet()
-        self.__peer_.client_send_message(message)
-
-    def disconnect_client(self):
+    def disconnect_from_server(self):
         self.__peer_.socket_close()
+
+    def send_message(self, message, protocol, address=None):
+        self.__peer_.client_send_message(message, protocol, address)
+
+    def receive_message(self, protocol):
+        message = self.__peer_.client_receive_message(protocol)
+        return message
 
     def __set_username(self, username):
         self.__username = username
@@ -70,13 +69,13 @@ class client:
         return self.__client_address
 
     def __set_client_name(self, client_name):
-        self.__server_name = client_name
+        self.__client_name = client_name
 
     def get_client_name(self):
         return self.__client_name
 
     def __set_domain(self, domain):
-        self.__set_domain = domain
+        self.__domain = domain
 
     def get_domain(self):
         return self.__domain
@@ -87,10 +86,10 @@ class client:
     def get_port(self):
         return self.__port
 
-    def __set_port(self, rinstance):
+    def __set_rinstance(self, rinstance):
         self.__rinstance = rinstance
 
-    def get_port(self):
+    def get_rinstance(self):
         return self.__rinstance
 
     def __set_client_network_name(self, client_network_name):

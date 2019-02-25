@@ -20,15 +20,39 @@ class registerar(server):
                                 port, server_network_name, content_type,
                                 content_sub_type)
         self.__server_.create_server(self.register_server)
+        self.__initialize_db()
 
     def register_server(self, client_socket=None):
         message = self.__server_.receive_message(None)
         print('')
         print('Register message: ')
-        print(message)
+        # print(message)
         headers = message.split('\n')
         code = '200'
-        sender_name = headers[5].split('@')[1].split('>')[0]
+        for header in headers:
+            if header[:4] == 'From':
+                sender_name = header.split('@')[1].split('>')[0]
+                sender_network_name = header.split('@')[0].split(':')[2]
+            if header[:3] == 'Via':
+                domain = header.split(' ')[1].split(';')[0]
+                protocol = header.split('/')[2].split(' ')[0]
+                port = header.split(':')[2].split(';')[0]
+            if header[:2] == 'To':
+                receiver_name = header.split('@')[1].split('>')[0]
+                receiver_network_name = header.split('@')[0].split(':')[2]
+
+    #  Fix headers and assign values to variables
+
+
+        print(sender_name)
+        print(sender_network_name)
+        print(domain)
+        print(protocol)
+        print(port)
+        print(receiver_name)
+        print(receiver_network_name)
+        raise('Error')
+        '''sender_name = headers[5].split('@')[1].split('>')[0]
         sender_network_name = headers[5].split('@')[0].split(':')[2]
         domain = headers[0].split(':')[1].split(' ')[0]
         protocol = headers[1].split(' ')[1].split('/')[2]
@@ -44,7 +68,7 @@ class registerar(server):
         content_type = 'application'
         content_sub_type = 'sdp'
         from_tag = headers[5].split('=')[1]
-        to_tag = 'awdvsd6676'
+        to_tag = '6676'
         response_ = response(code, sender_name, sender_network_name,
                              domain, protocol, port, rinstance, branch,
                              receiver_name, receiver_network_name, seq_num,
@@ -54,13 +78,17 @@ class registerar(server):
         address = ('192.168.1.240', int(port))
         print('OK message')
         print(response_)
-        self.__server_.send_message(response_, address)
+        self.__server_.send_message(response_, address)'''
 
     def _establish_session(self, client_socket, seq_num, client_name, client_network_name):
         invite_packet_a = self.__s._receive_message(client_socket)
         subject = invite_packet_a.split('Subject ')[1].split('\r\n')[0]
         update_statement = self.db.update_data({'client_name': client_name, 'client_network_name': client_network_name}, {'subject': subject})
         self.db.execute_statement(update_statement)
+
+    def __initialize_db(self):
+        self.__db = database()  #Might have to add database_tests name
+
         # payload = client_socket.recv(self.buff_size).decode('UTF-8')
         # print(payload)
         # print('')
@@ -68,7 +96,7 @@ class registerar(server):
         # self.db.execute_statement(display_statement)
         # invite_packet_b = self.invite(1)
         # print(invite_packet_b)
-       
+
         # Server receives invite packet from client1
         # Server sends invite packet to client2
 
@@ -109,6 +137,3 @@ class registerar(server):
         request_packet_ = response_packet.response_packet(200, self.server_name, self.domain, self.protocol, self.port, self.server_network_name, client_network_name, client_name, seq_num, request_type, subject, self.content_type, self.content_sub_type)
         packet = r.get_packet()
         return packet
-
-    def __initialize_db(self):
-        self.__db = database()  #Might have to add database_tests name

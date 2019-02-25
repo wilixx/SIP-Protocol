@@ -1,3 +1,5 @@
+from sys import path
+path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\packet')
 from packet import packet
 
 
@@ -7,15 +9,14 @@ class request:
     __requests = ['INVITE', 'BYE', 'REGISTER', 'ACK']
 
     def __init__(self, request_type, sender_name, sender_network_name, domain,
-                 protocol, port, rinstance, receiver_name,
+                 protocol, port, rinstance, branch, receiver_name,
                  receiver_network_name, seq_num, call_id,
-                 subject, content_type, content_sub_type, from_tag,
-                 to_tag):
+                 subject, content_type, content_sub_type, from_tag):
         self.__packet_ = packet(sender_name, sender_network_name,
-                                domain, protocol, port, rinstance,
+                                domain, protocol, port, rinstance, branch,
                                 receiver_name, receiver_network_name, seq_num,
-                                call_id, request_type, subject, content_type,
-                                content_sub_type, from_tag, to_tag)
+                                call_id, request_type, subject, content_type,  # Have to remove subject
+                                content_sub_type, from_tag, '')
         self.__add_uri(request_type, receiver_name, domain)
 
     def __add_uri(self, request_type, receiver_name, domain):
