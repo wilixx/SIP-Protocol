@@ -6,6 +6,7 @@ from database import database
 sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\packet\\request')
 from request import request
 
+
 class node:
 
     __client_ = None
@@ -30,7 +31,6 @@ class node:
                            self.__client_.get_domain(),
                            self.__client_.get_protocol(),
                            self.__client_.get_port(),
-                           self.__client_.get_rinstance(),
                            branch, server_name, server_network_name,
                            seq_num, call_id, 'register packet',
                            self.__client_.get_content_type(),

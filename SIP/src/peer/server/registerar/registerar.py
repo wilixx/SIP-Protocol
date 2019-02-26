@@ -27,58 +27,43 @@ class registerar(server):
         print('')
         print('Register message: ')
         # print(message)
-        headers = message.split('\n')
+        headers = message.split('\r\n')
         code = '200'
         for header in headers:
             if header[:4] == 'From':
-                sender_name = header.split('@')[1].split('>')[0]
-                sender_network_name = header.split('@')[0].split(':')[2]
+                sender_name = header.split('@')[0].split('<')[1].split(':')[1]
+                sender_network_name = header.split(' ')[1].split('<')[0]
+                from_tag = header.split(';tag=')[1]
             if header[:3] == 'Via':
-                domain = header.split(' ')[1].split(';')[0]
+                domain = header.split(' ')[2].split(';')[0].split(':')[0]
                 protocol = header.split('/')[2].split(' ')[0]
                 port = header.split(':')[2].split(';')[0]
             if header[:2] == 'To':
-                receiver_name = header.split('@')[1].split('>')[0]
-                receiver_network_name = header.split('@')[0].split(':')[2]
-
-    #  Fix headers and assign values to variables
-
-
-        print(sender_name)
-        print(sender_network_name)
-        print(domain)
-        print(protocol)
-        print(port)
-        print(receiver_name)
-        print(receiver_network_name)
-        raise('Error')
-        '''sender_name = headers[5].split('@')[1].split('>')[0]
-        sender_network_name = headers[5].split('@')[0].split(':')[2]
-        domain = headers[0].split(':')[1].split(' ')[0]
-        protocol = headers[1].split(' ')[1].split('/')[2]
-        port = headers[3].split(':')[3].split(';')[0]
-        receiver_name = headers[4].split('@')[1].split('>')[0]
-        receiver_network_name = headers[4].split('@')[0].split(':')[2]
-        seq_num = headers[7].split(':')[1].split(' ')[1]
-        call_id = headers[6].split(': ')[1]
-        request_type = headers[7].split(':')[1].split(' ')[2].split('\'')[0]
-        rinstance = headers[3].split('=')[1].split('>')[0]
-        branch = headers[1].split(';')[1] + ';' + headers[1].split(';')[2]
-        subject = 'OK'
-        content_type = 'application'
-        content_sub_type = 'sdp'
-        from_tag = headers[5].split('=')[1]
-        to_tag = '6676'
+                receiver_name = header.split('@')[0].split('<')[1].split(':')
+                receiver_name = receiver_name[0]
+                receiver_network_name = header.split(' ')[1].split('<')[0]
+            if header[:7] == 'Call-ID':
+                call_id = header.split(': ')[1]
+            if header[:4] == 'CSeq':
+                seq_num = header.split(' ')[1][:1]
+                request_type = header.split(' ')[2]
+            if header[:7] == 'Subject':
+                subject = header.split(': ')[1]
+            if header[:12] == 'Content-Type':
+                content_type = header.split(': ')[1].split('/')[0]
+                content_sub_type = header.split(': ')[1].split('/')[1]
+            to_tag = '423gv2'
+            subject = 'asdvas'
         response_ = response(code, sender_name, sender_network_name,
-                             domain, protocol, port, rinstance, branch,
-                             receiver_name, receiver_network_name, seq_num,
-                             call_id, request_type, subject, content_type,
+                             domain, protocol, port, receiver_name,
+                             receiver_network_name, seq_num, call_id,
+                             request_type, subject, content_type,
                              content_sub_type, from_tag, to_tag)
         response_ = response_.get_packet()
         address = ('192.168.1.240', int(port))
         print('OK message')
         print(response_)
-        self.__server_.send_message(response_, address)'''
+        self.__server_.send_message(response_, address)
 
     def _establish_session(self, client_socket, seq_num, client_name, client_network_name):
         invite_packet_a = self.__s._receive_message(client_socket)
