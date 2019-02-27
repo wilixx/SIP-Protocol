@@ -39,7 +39,8 @@ class registerar(server):
                 domain = header.split(' ')[2].split(';')[0].split(':')[0]
                 protocol = header.split('/')[2].split(' ')[0]
                 port = header.split(':')[2].split(';')[0]
-                branch = header.split(';')[1] + ';' + header.split(';')[2].split('=')[0]
+                branch = header.split(';')[1] + ';'
+                branch += header.split(';')[2].split('=')[0]
             if header[:2] == 'To':
                 receiver_name = header.split('@')[0].split('<')[1].split(':')
                 receiver_name = receiver_name[0]
@@ -55,26 +56,26 @@ class registerar(server):
                 content_type = header.split(': ')[1].split('/')[0]
                 content_sub_type = header.split(': ')[1].split('/')[1]
             to_tag = '423gv2'
-        response_ = response(code, sender_name, sender_network_name,
-                             domain, protocol, port, branch, receiver_name,
+        response_ = self._ok(code, sender_name, sender_network_name, domain,
+                             protocol, port, branch, receiver_name,
                              receiver_network_name, seq_num, request_type,
-                             call_id, subject, content_type,
-                             content_sub_type, from_tag, to_tag)
-        response_ = response_.get_packet()
+                             call_id, subject, content_type, content_sub_type,
+                             from_tag, to_tag)
         address = ('192.168.1.240', 5060)
         print('')
         print('OK message')
         print(response_)
         self.__server_.send_message(response_, address)
 
-    def _establish_session(self, client_socket, seq_num, client_name, client_network_name):
+    def _establish_session(self, client_socket, seq_num, client_name,
+                           client_network_name):
         invite_packet_a = self.__s._receive_message(client_socket)
         subject = invite_packet_a.split('Subject ')[1].split('\r\n')[0]
         update_statement = self.db.update_data({'client_name': client_name, 'client_network_name': client_network_name}, {'subject': subject})
         self.db.execute_statement(update_statement)
 
     def __initialize_db(self):
-        self.__db = database()  #Might have to add database_tests name
+        self.__db = database()  # Might have to add database_tests name
 
         # payload = client_socket.recv(self.buff_size).decode('UTF-8')
         # print(payload)
@@ -105,22 +106,26 @@ class registerar(server):
         # Client1 sends ok packet to server
         # Server sends ok packet to client2
 
-    def _invite(self, seq_num):
-        request_packet_ = request_packet.request_packet(1, self._server_name, self._domain, self._protocol, self._port, self._server_network_name, self._client_network_name, self._client_name, seq_num, 'INVITE', self._content_type, self._content_sub_type)
-        packet = r.get_packet()
-        return packet
+    # def _invite(self, seq_num):
+    #     packet = r.get_packet()
+    #    return packet
 
-    def _trying(self, seq_num, client_name, client_network_name, subject, request_type):
-        request_packet_ = response_packet.response_packet(100, self._server_name, self._domain, self._protocol, self._port, self._server_network_name, client_network_name, client_name, seq_num, request_type, subject, self._content_type, self._content_sub_type)
-        packet = r.get_packet()
-        return packet
+    # def _trying(self, seq_num, client_name, client_network_name, subject, request_type):
+    #     packet = r.get_packet()
+    #    return packet
 
-    def _ringing(self, seq_num, client_name, client_network_name, subject, request_type):
-        request_packet_ = response_packet.response_packet(180, self._server_name, self._domain, self._protocol, self._port, self._server_network_name, client_network_name, client_name, seq_num, request_type, subject, self._content_type, self._content_sub_type)
-        packet = r.get_packet()
-        return packet
+    # def _ringing(self, seq_num, client_name, client_network_name, subject, request_type):
+    #    packet = r.get_packet()
+    #    return packet
 
-    def _ok(self, seq_num, client_name, client_network_name, subject, request_type):
-        request_packet_ = response_packet.response_packet(200, self.server_name, self.domain, self.protocol, self.port, self.server_network_name, client_network_name, client_name, seq_num, request_type, subject, self.content_type, self.content_sub_type)
-        packet = r.get_packet()
-        return packet
+    def _ok(self, code, sender_name, sender_network_name, domain, protocol,
+            port, branch, receiver_name, receiver_network_name, seq_num,
+            request_type, call_id, subject, content_type, content_sub_type,
+            from_tag, to_tag):
+        response_ = response(code, sender_name, sender_network_name,
+                             domain, protocol, port, branch, receiver_name,
+                             receiver_network_name, seq_num, request_type,
+                             call_id, subject, content_type,
+                             content_sub_type, from_tag, to_tag)
+        response_ = response_.get_packet()
+        return response_

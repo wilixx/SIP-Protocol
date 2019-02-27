@@ -25,8 +25,8 @@ class packet:
         self.__packet += '\r\nFrom: ' + sender_network_name + \
                          '<sip:' + sender_name + '@' + domain + '>;tag=' + \
                          from_tag
-        #self.__packet += '\r\nFrom: ' + '<sip:' + sender_network_name + '@' + \
-                         #domain + '>;tag=' + from_tag
+        # self.__packet += '\r\nFrom: ' + '<sip:' + sender_network_name + \
+        #                 '@' + domain + '>;tag=' + from_tag
 
     def __add_to(self, receiver_name, receiver_network_name, domain, to_tag):
         if to_tag == '':
@@ -60,16 +60,18 @@ class packet:
                       port):
         self.__packet += '\r\nContact: ' + receiver_network_name + \
                          '<sip:' + receiver_name + '@' + domain + '>'
-        # self.__packet += '\r\nContact: ' + '<sip:' + receiver_network_name + \
+        # self.__packet += '\r\nContact: ' + '<sip:' + \
+        #                  receiver_network_name +
         #                  '@' + domain + ':' + port + ';rinstance=' + \
-        #                 rinstance + '>;expires=3600'
+        #                  rinstance + '>;expires=3600'
 
     def __add_content_type(self, content_type, content_sub_type):
         self.__packet += '\r\nContent-Type: ' + content_type + '/' + \
             content_sub_type
 
     def __add_content_length(self):
-        self.__packet += '\r\nContent-Length: 0' # + content_length  # Count the size of the packet
+        self.__packet += '\r\nContent-Length: 0'  # + content_length
+        # Count the size of the packet
 
     def __add_expires(self):
         self.__packet += '\r\nExpires: 3600'

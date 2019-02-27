@@ -53,4 +53,5 @@ class node:
         # self.__client_.
 
     def __initialize_db(self):
-        self.__db = database('client_data')  # Might have to add database_tests name
+        self.__db = database('client_data')
+        # Might have to add database_tests name
