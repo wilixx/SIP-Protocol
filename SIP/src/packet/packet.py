@@ -58,12 +58,12 @@ class packet:
 
     def __add_contact(self, receiver_network_name, receiver_name, domain,
                       port):
-        self.__packet += '\r\nContact: ' + receiver_network_name + \
-                         '<sip:' + receiver_name + '@' + domain + '>'
-        # self.__packet += '\r\nContact: ' + '<sip:' + \
-        #                  receiver_network_name +
-        #                  '@' + domain + ':' + port + ';rinstance=' + \
-        #                  rinstance + '>;expires=3600'
+        # self.__packet += '\r\nContact: ' + receiver_network_name + \
+        #                 '<sip:' + receiver_name + '@' + domain + '>'
+        self.__packet += '\r\nContact: ' + '<sip:' + \
+                          receiver_network_name + \
+                          '@' + domain + ':' + port + ';rinstance=' + \
+                          rinstance + '>;expires=3600'
 
     def __add_content_type(self, content_type, content_sub_type):
         self.__packet += '\r\nContent-Type: ' + content_type + '/' + \
