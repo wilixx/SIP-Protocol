@@ -36,10 +36,12 @@ class node:
                            self.__client_.get_content_type(),
                            self.__client_.get_content_sub_type(),
                            from_tag)
-        message = request_.get_packet()
+        register_packet = request_.get_packet()
         print('Node:')
-        print(message)
-        self.__client_.send_message(message, protocol, server_addr)
+        print(register_packet)
+        self.__client_.send_message(register_packet, protocol, server_addr)
+        ok_packet = self.__client_.receive_message(protocol)
+        print(ok_packet)
         self.__client_.disconnect_from_server()
 
     def _deregister_client(self):

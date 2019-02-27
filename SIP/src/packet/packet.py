@@ -6,7 +6,7 @@ class packet:
     __packet = ''
 
     def __init__(self, sender_name, sender_network_name, domain, protocol,
-                 branch, port, receiver_name, receiver_network_name,
+                 port, branch, receiver_name, receiver_network_name,
                  seq_num, request_type, call_id, subject,
                  content_type, content_sub_type, from_tag, to_tag):
         self.__make_packet(sender_name, sender_network_name, domain, protocol,
@@ -19,7 +19,7 @@ class packet:
 
     def __add_via(self, protocol, domain, port, branch):
         self.__packet += '\r\nVia: SIP/2.0/' + protocol + ' ' + domain + \
-            ':' + port + ';' + branch
+            ':' + port + ';' + branch + '=' + port
 
     def __add_from(self, sender_name, sender_network_name, domain, from_tag):
         self.__packet += '\r\nFrom: ' + sender_network_name + \

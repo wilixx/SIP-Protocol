@@ -26,7 +26,8 @@ class registerar(server):
         message = self.__server_.receive_message(None)
         print('')
         print('Register message: ')
-        # print(message)
+        print(message)
+        print('')
         headers = message.split('\r\n')
         code = '200'
         for header in headers:
@@ -38,6 +39,7 @@ class registerar(server):
                 domain = header.split(' ')[2].split(';')[0].split(':')[0]
                 protocol = header.split('/')[2].split(' ')[0]
                 port = header.split(':')[2].split(';')[0]
+                branch = header.split(';')[1] + ';' + header.split(';')[2].split('=')[0]
             if header[:2] == 'To':
                 receiver_name = header.split('@')[0].split('<')[1].split(':')
                 receiver_name = receiver_name[0]
@@ -53,14 +55,14 @@ class registerar(server):
                 content_type = header.split(': ')[1].split('/')[0]
                 content_sub_type = header.split(': ')[1].split('/')[1]
             to_tag = '423gv2'
-            subject = 'asdvas'
         response_ = response(code, sender_name, sender_network_name,
-                             domain, protocol, port, receiver_name,
-                             receiver_network_name, seq_num, call_id,
-                             request_type, subject, content_type,
+                             domain, protocol, port, branch, receiver_name,
+                             receiver_network_name, seq_num, request_type,
+                             call_id, subject, content_type,
                              content_sub_type, from_tag, to_tag)
         response_ = response_.get_packet()
-        address = ('192.168.1.240', int(port))
+        address = ('192.168.1.240', 5060)
+        print('')
         print('OK message')
         print(response_)
         self.__server_.send_message(response_, address)

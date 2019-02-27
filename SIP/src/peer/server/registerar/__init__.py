@@ -1,7 +1,7 @@
 from registerar import registerar
 
 server_name = 'SIP_Server'
-domain = '192.168.1.218'
+domain = 'VaaanInfra.com'
 protocol = 'UDP'
 port = '5060'
 server_network_name = 'SIP_SERVER'
