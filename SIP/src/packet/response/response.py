@@ -1,4 +1,4 @@
-from packet import packet
+from SIP.src.packet.packet import packet
 from random import choice
 from string import digits
 
@@ -72,16 +72,14 @@ class response:
                    __redirection_responses, __client_faliure_responses,
                    __server_faliure_responses, __global_faliure_responses]
 
-    def __init__(self, code, sender_name, sender_network_name, domain,
-                 protocol, port, branch, receiver_name, receiver_network_name,
-                 seq_num, request_type, call_id, subject, content_type,
-                 content_sub_type, from_tag, to_tag):
-        self.__packet_ = packet.packet(sender_name, sender_network_name,
-                                       domain, protocol, port, branch,
-                                       receiver_name, receiver_network_name,
-                                       seq_num, request_type, call_id, subject,
-                                       content_type, content_sub_type,
-                                       from_tag, to_tag)
+    def __init__(self, code, sender_name, domain, protocol, port,
+                 receiver_name, receiver_network_name, seq_num, request_type,
+                 call_id, subject, content_type, content_sub_type, from_tag,
+                 to_tag):
+        self.__packet_ = packet(sender_name, domain, protocol, port,
+                                receiver_name, receiver_network_name, seq_num,
+                                request_type, call_id, subject, content_type,
+                                content_sub_type, from_tag, to_tag)
         self.__add_uri(code)
 
     def __add_uri(self, code):
