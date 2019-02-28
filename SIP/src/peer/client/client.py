@@ -1,8 +1,5 @@
-import sys
-sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\peer')
-from peer import peer
-sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\packet\\request')
-from request import request
+from SIP.src.peer.peer import peer
+from SIP.src.packet.request.request import request
 
 
 class client:
@@ -17,14 +14,12 @@ class client:
     __domain = ''
     __port = ''
     __protocol = ''
-    __rinstance = ''
     __client_network_name = ''
     __content_type = ''
     __content_sub_type = ''
 
     def __init__(self, username, password, client_name, domain, protocol,
-                 port, rinstance, client_network_name, content_type,
-                 content_sub_type):
+                 port, client_network_name, content_type, content_sub_type):
         self.__peer_ = peer(protocol, int(port))  # Protcol and port
         self.__set_username(username)
         self.__set_password(password)
@@ -32,7 +27,6 @@ class client:
         self.__set_domain(domain)
         self.__set_port(port)
         self.__set_protocol(protocol)
-        self.__set_rinstance(rinstance)
         self.__set_client_network_name(client_network_name)
         self.__set_content_type(content_type)
         self.__set_content_sub_type(content_sub_type)
@@ -43,8 +37,8 @@ class client:
     def disconnect_from_server(self):
         self.__peer_.socket_close()
 
-    def send_message(self, message, protocol, address=None):
-        self.__peer_.client_send_message(message, protocol, address)
+    def send_message(self, message, address=None):
+        self.__peer_.client_send_message(message, address)
 
     def receive_message(self, protocol):
         message = self.__peer_.client_receive_message(protocol)
@@ -85,12 +79,6 @@ class client:
 
     def get_port(self):
         return self.__port
-
-    def __set_rinstance(self, rinstance):
-        self.__rinstance = rinstance
-
-    def get_rinstance(self):
-        return self.__rinstance
 
     def __set_client_network_name(self, client_network_name):
         self.__client_network_name = client_network_name
