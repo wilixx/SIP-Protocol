@@ -7,11 +7,11 @@ class peer:
     __s = socket
 
     __protocol = ''
-    __port = 6050
+    __port = 5060
     __s_address = ()
     __buff_size = 4096
 
-    def __init__(self, protocol='TCP', port=6050, buff_size=4096):
+    def __init__(self, protocol='TCP', port=5060, buff_size=4096):
         self.__set_protocol(protocol)
         self.__set_port(port)
         self.__set_buff_size(buff_size)
@@ -44,11 +44,11 @@ class peer:
     def socket_close(self):
         self.__s.close()
 
-    def client_send_message(self, message, protocol, address=None):
+    def client_send_message(self, message, address=None):
         message = message.encode('UTF-8')
-        if protocol == 'TCP':
+        if address is None:
             self.__s.send(message)
-        if protocol == 'UDP':
+        else:
             self.__s.sendto(message, address)
 
     def client_receive_message(self, protocol):
