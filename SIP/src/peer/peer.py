@@ -53,10 +53,10 @@ class peer:
 
     def client_receive_message(self, protocol):
         if protocol == 'TCP':
-            message = self.__s.recv(self._get_buff_size()).decode('UTF-8')
+            message = self.__s.recv(self._get_buff_size())  # Client socket.recv maybe be the correct method
         if protocol == 'UDP':
-            message = self.__s.recvfrom(self._get_buff_size()).decode('UTF-8')
-        return message
+            message, addr = self.__s.recvfrom(self._get_buff_size())
+        return message.decode('UTF-8')
 
     def server_send_message(self, protocol, message, client_socket=None,
                             address=None):

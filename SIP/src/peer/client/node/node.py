@@ -30,9 +30,10 @@ class node:
                            'register packet', self.__client_.get_content_type(),
                            self.__client_.get_content_sub_type(), from_tag)
         register_packet = request_.get_packet()
-        print('Node:')
+        print('Node:\n')
         print(register_packet)
         self.__client_.send_message(register_packet, server_addr)
+        print('Ok packet\n')
         ok_packet = self.__client_.receive_message(protocol)
         print(ok_packet)
         self.__client_.disconnect_from_server()

@@ -1,8 +1,8 @@
-from SIP.src.peer.client.node.node import node
+from node import node
 
-username = '8007'
+username = 'CLIENT'
 password = '1234'
-client_name = 'CLIENT'
+client_name = 'client'
 domain = 'VaaanInfra.com'
 client_network_name = 'client'
 content_type = 'application'

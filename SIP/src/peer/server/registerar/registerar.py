@@ -12,16 +12,15 @@ class registerar:
 
     def __init__(self, server_name, domain, server_network_name, content_type,
                  content_sub_type, protocol='TCP', port='6050'):
-        # self.__initialize_db()
+        self.__initialize_db()
         self.__server_ = server(server_name, domain, protocol,
                                 port, server_network_name, content_type,
                                 content_sub_type)
         self.__server_.create_server(self.register_server)
-        self.__initialize_db()
 
     def register_server(self, client_socket=None):
         if client_socket is None:
-            message = self.__server_.receive_message(None)
+            message, client_address = self.__server_.receive_message(None)
             print('')
             print('Register message: ')
             print(message)
@@ -55,11 +54,12 @@ class registerar:
                                  receiver_name, receiver_network_name, seq_num,
                                  request_type, call_id, subject, content_type,
                                  content_sub_type, from_tag, to_tag)
-            address = ('192.168.1.240', 5060)
+            print(client_address)
             print('')
             print('OK message')
             print(response_)
-            self.__server_.send_message(response_, address)
+            self.__server_.send_message(response_, client_address)
+            self.__server_.receive_message()
         else:
             message = self.__server_.receive_message(client_socket)
             print('')
@@ -98,11 +98,11 @@ class registerar:
                                  receiver_name, receiver_network_name, seq_num,
                                  request_type, call_id, subject, content_type,
                                  content_sub_type, from_tag, to_tag)
-            address = ('192.168.1.240', 5060)
             print('')
             print('OK message')
             print(response_)
-            self.__server_.send_message(response_, address)
+            self.__server_.send_message(response_)
+            self.__server_.receive_message(client_socket)
 
     def _establish_session(self, client_socket, seq_num, client_name,
                            client_network_name):
