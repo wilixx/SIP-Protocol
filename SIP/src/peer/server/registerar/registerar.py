@@ -1,15 +1,12 @@
-import sys
-sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src')
-sys.path.append('C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\packet\\response')
 from random import choice
 from string import digits
-from peer.server.server import server
-from packet.request import request
-from packet.response.response import response
-from database import database
+from SIP.src.peer.server.server import server
+from SIP.src.packet.request.request import request
+from SIP.src.packet.response.response import response
+from SIP.src.database.database import database
 
 
-class registerar(server):
+class registerar:
     __server_ = None
     __db = None
 
@@ -23,49 +20,89 @@ class registerar(server):
         self.__initialize_db()
 
     def register_server(self, client_socket=None):
-        message = self.__server_.receive_message(None)
-        print('')
-        print('Register message: ')
-        print(message)
-        print('')
-        headers = message.split('\r\n')
-        code = '200'
-        for header in headers:
-            if header[:4] == 'From':
-                sender_name = header.split('@')[0].split('<')[1].split(':')[1]
-                sender_network_name = header.split(' ')[1].split('<')[0]
-                from_tag = header.split(';tag=')[1]
-            if header[:3] == 'Via':
-                domain = header.split(' ')[2].split(';')[0].split(':')[0]
-                protocol = header.split('/')[2].split(' ')[0]
-                port = header.split(':')[2].split(';')[0]
-                branch = header.split(';')[1] + ';'
-                branch += header.split(';')[2].split('=')[0]
-            if header[:2] == 'To':
-                receiver_name = header.split('@')[0].split('<')[1].split(':')
-                receiver_name = receiver_name[0]
-                receiver_network_name = header.split(' ')[1].split('<')[0]
-            if header[:7] == 'Call-ID':
-                call_id = header.split(': ')[1]
-            if header[:4] == 'CSeq':
-                seq_num = header.split(' ')[1][:1]
-                request_type = header.split(' ')[2]
-            if header[:7] == 'Subject':
-                subject = header.split(': ')[1]
-            if header[:12] == 'Content-Type':
-                content_type = header.split(': ')[1].split('/')[0]
-                content_sub_type = header.split(': ')[1].split('/')[1]
-            to_tag = '423gv2'
-        response_ = self._ok(code, sender_name, sender_network_name, domain,
-                             protocol, port, branch, receiver_name,
-                             receiver_network_name, seq_num, request_type,
-                             call_id, subject, content_type, content_sub_type,
-                             from_tag, to_tag)
-        address = ('192.168.1.240', 5060)
-        print('')
-        print('OK message')
-        print(response_)
-        self.__server_.send_message(response_, address)
+        if client_socket is None:
+            message = self.__server_.receive_message(None)
+            print('')
+            print('Register message: ')
+            print(message)
+            print('')
+            headers = message.split('\r\n')
+            code = '200'
+            for header in headers:
+                if header[:4] == 'From':
+                    sender_name = header.split('@')[0].split('<')[1].split(':')[1]
+                    from_tag = header.split(';tag=')[1]
+                if header[:3] == 'Via':
+                    domain = header.split(' ')[2].split(';')[0].split(':')[0]
+                    protocol = header.split('/')[2].split(' ')[0]
+                    port = header.split(':')[2].split(';')[0]
+                if header[:2] == 'To':
+                    receiver_name = header.split('@')[0].split(':')[2]
+                if header[:7] == 'Call-ID':
+                    call_id = header.split(': ')[1]
+                if header[:4] == 'CSeq':
+                    seq_num = header.split(' ')[1][:1]
+                    request_type = header.split(' ')[2]
+                if header[:7] == 'Subject':
+                    subject = header.split(': ')[1]
+                if header[:12] == 'Content-Type':
+                    content_type = header.split(': ')[1].split('/')[0]
+                    content_sub_type = header.split(': ')[1].split('/')[1]
+                if header[:7] == 'Contact':
+                    receiver_network_name = header.split(':')[2].split('@')[0]
+            to_tag = '423gv2' # Generate to tag
+            response_ = self._ok(code, sender_name, domain, protocol, port,
+                                 receiver_name, receiver_network_name, seq_num,
+                                 request_type, call_id, subject, content_type,
+                                 content_sub_type, from_tag, to_tag)
+            address = ('192.168.1.240', 5060)
+            print('')
+            print('OK message')
+            print(response_)
+            self.__server_.send_message(response_, address)
+        else:
+            message = self.__server_.receive_message(client_socket)
+            print('')
+            print('Register message: ')
+            print(message)
+            print('')
+            headers = message.split('\r\n')
+            code = '200'
+            for header in headers:
+                if header[:4] == 'From':
+                    sender_name = header.split('@')[0].split('<')[1].split(':')[
+                        1]
+                    from_tag = header.split(';tag=')[1]
+                if header[:3] == 'Via':
+                    domain = header.split(' ')[2].split(';')[0].split(':')[0]
+                    protocol = header.split('/')[2].split(' ')[0]
+                    port = header.split(':')[2].split(';')[0]
+                    branch = header.split(';')[1] + ';'
+                    branch += header.split(';')[2].split('=')[0]
+                if header[:2] == 'To':
+                    receiver_name = header.split('@')[0].split(':')[2]
+                if header[:7] == 'Call-ID':
+                    call_id = header.split(': ')[1]
+                if header[:4] == 'CSeq':
+                    seq_num = header.split(' ')[1][:1]
+                    request_type = header.split(' ')[2]
+                if header[:7] == 'Subject':
+                    subject = header.split(': ')[1]
+                if header[:12] == 'Content-Type':
+                    content_type = header.split(': ')[1].split('/')[0]
+                    content_sub_type = header.split(': ')[1].split('/')[1]
+                if header[:7] == 'Contact':
+                    receiver_network_name = header.split(':')[2].split('@')[0]
+            to_tag = '423gv2'  # Generate to tag
+            response_ = self._ok(code, sender_name, domain, protocol, port,
+                                 receiver_name, receiver_network_name, seq_num,
+                                 request_type, call_id, subject, content_type,
+                                 content_sub_type, from_tag, to_tag)
+            address = ('192.168.1.240', 5060)
+            print('')
+            print('OK message')
+            print(response_)
+            self.__server_.send_message(response_, address)
 
     def _establish_session(self, client_socket, seq_num, client_name,
                            client_network_name):
@@ -75,7 +112,7 @@ class registerar(server):
         self.db.execute_statement(update_statement)
 
     def __initialize_db(self):
-        self.__db = database()  # Might have to add database_tests name
+        self.__db = database('clients.db')  # Might have to add database_tests name
 
         # payload = client_socket.recv(self.buff_size).decode('UTF-8')
         # print(payload)
@@ -118,12 +155,12 @@ class registerar(server):
     #    packet = r.get_packet()
     #    return packet
 
-    def _ok(self, code, sender_name, sender_network_name, domain, protocol,
-            port, branch, receiver_name, receiver_network_name, seq_num,
+    def _ok(self, code, sender_name, domain, protocol, port,
+            receiver_name, receiver_network_name, seq_num,
             request_type, call_id, subject, content_type, content_sub_type,
             from_tag, to_tag):
-        response_ = response(code, sender_name, sender_network_name,
-                             domain, protocol, port, branch, receiver_name,
+        response_ = response(code, sender_name, domain,
+                             protocol, port, receiver_name,
                              receiver_network_name, seq_num, request_type,
                              call_id, subject, content_type,
                              content_sub_type, from_tag, to_tag)

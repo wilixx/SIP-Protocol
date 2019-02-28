@@ -1,4 +1,4 @@
-from peer.peer import peer
+from SIP.src.peer.peer import peer
 
 
 class server:
@@ -25,30 +25,33 @@ class server:
         self.__set_server_network_name(server_network_name)
         self.__set_content_type(content_type)
         self.__set_content_sub_type(content_sub_type)
+        # Create server on init
 
     def create_server(self, func):
         print('Started server at address:' + str(self.__peer_._get_s_address()))
         self.__peer_.socket_bind()
         if self.get_protocol() == 'TCP':
-            self.__peer_.socket_listen(self._get_max_num_of_clients())
-        try:
-            while True:
-                if self.get_protocol() == 'TCP':
+            try:
+                while True:
+                    self.__peer_.socket_listen(self._get_max_num_of_clients())
                     (client_socket, addr) = self.__peer_.socket_accept()  # Create new thread for each client
                     self._exec_func(func, client_socket)
-                if self.get_protocol() == 'UDP':
-                    self._exec_func(func)
-        except KeyboardInterrupt:
-            print('Closed socket')
-        finally:
-            self.__peer_.socket_close()
+            except KeyboardInterrupt:
+                print('Closed socket')
+            finally:
+                self.__peer_.socket_close()
+        if self.get_protocol() == 'UDP':
+            self._exec_func(func)
+
 
     def _exec_func(self, func, client_socket=None):
         if func.__name__ == 'register_server':
+            # Can also segregate by protocol
             if client_socket is None:
                 return func()
             else:
                 return func(client_socket)
+        # Have to add transfer server
 
     def send_message(self, message, address=None, client_socket=None):
         protocol = self.get_protocol()
