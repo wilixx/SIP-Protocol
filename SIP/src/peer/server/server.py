@@ -41,11 +41,17 @@ class server:
             finally:
                 self.__peer_.socket_close()
         if self.get_protocol() == 'UDP':
-            self._exec_func(func)
+            try:
+                while True:
+                    self._exec_func(func)
+            except KeyboardInterrupt:
+                print('Closed socket')
+            finally:
+                self.__peer_.socket_close()
 
 
     def _exec_func(self, func, client_socket=None):
-        if func.__name__ == 'register_server':
+        if func.__name__ == 'register_client':
             # Can also segregate by protocol
             if client_socket is None:
                 return func()
@@ -60,8 +66,12 @@ class server:
 
     def receive_message(self, client_socket=None):
         protocol = self.get_protocol()
-        message = self.__peer_.server_receive_message(client_socket)
-        return message
+        if protocol == 'TCP':
+            message = self.__peer_.server_receive_message(client_socket)
+            return message
+        if protocol == 'UDP':
+            message, client_address = self.__peer_.server_receive_message()
+            return message, client_address
 
     def __set_server_name(self, server_name):
         self.__server_name = server_name

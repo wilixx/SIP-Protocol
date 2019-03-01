@@ -2,7 +2,7 @@ from node import node
 
 # Sample UDP Node
 username = 'CLIENT'
-password = '1234'
+password = '12342'
 client_name = 'client'
 domain = 'VaaanInfra.com'
 client_network_name = 'client'

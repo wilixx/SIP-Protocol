@@ -14,30 +14,50 @@ class node:
         self.__client_ = client(username, password, client_name, domain,
                                 protocol, port, client_network_name,
                                 content_type, content_sub_type)
-        self.__initialize_db()
+        # self.__initialize_db()
 
     def _register_client(self, server_name, server_network_name, server_addr):
         seq_num = '1'  # Random SEQ num
         call_id = '44asdvasdvasdvag435tqw454q34t'  # Random call id
         from_tag = 'asv3442'
-        protocol = 'UDP'
-        register_packet = self._register('REGISTER',
-                                         self.__client_.get_client_name(),
-                                         self.__client_.get_domain(),
-                                         self.__client_.get_protocol(),
-                                         self.__client_.get_port(), server_name,
-                                         server_network_name, seq_num, call_id,
-                                         'register packet',
-                                         self.__client_.get_content_type(),
-                                         self.__client_.get_content_sub_type(),
-                                         from_tag)
-        print('Node:\n')
-        print(register_packet)
-        self.__client_.send_message(register_packet, server_addr)
-        print('Ok packet\n')
-        ok_packet = self.__client_.receive_message(protocol)
-        print(ok_packet)
-        self.__client_.disconnect_from_server()
+        protocol = self.__client_.get_protocol()
+        if protocol == 'UDP':
+            register_packet = self._register('REGISTER',
+                                             self.__client_.get_client_name(),
+                                             self.__client_.get_domain(),
+                                             self.__client_.get_protocol(),
+                                             self.__client_.get_port(),
+                                             server_name, server_network_name,
+                                             seq_num, call_id, 'register packet',
+                                             self.__client_.get_content_type(),
+                                             self.__client_.get_content_sub_type(),
+                                             from_tag)
+            self.__client_.send_message(register_packet, server_addr)
+            packet = self.__client_.receive_message(protocol)
+            headers = packet.split('\r\n')
+            for header in headers:
+                if header[:3] == '200':
+                    ok_packet = packet
+                    print('Client ' + self.__client_.get_username() + \
+                          ' got registered')
+                if header[:3] == '401':
+                    unauthorized_packet = packet
+                    print('Client ' + self.__client_.get_username() + \
+                          ' got Unauthorized')
+            self.__client_.disconnect_from_server()
+        if protocol == 'TCP':
+            register_packet = self._register('REGISTER',
+                                             self.__client_.get_client_name(),
+                                             self.__client_.get_domain(),
+                                             self.__client_.get_protocol(),
+                                             self.__client_.get_port(),
+                                             server_name, server_network_name,
+                                             seq_num, call_id,
+                                             'register packet',
+                                             self.__client_.get_content_type(),
+                                             self.__client_.get_content_sub_type(),
+                                             from_tag)
+            # Complete Node with TCP
 
     def _deregister_client(self):
         request_ = request('REGISTER', '999', '999', '192.168.1.218', 'TCP', '6050', '8007', '8007', '1', 'REGISTER', 'application', 'sdp', '123')

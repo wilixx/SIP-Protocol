@@ -38,7 +38,7 @@ class client:
         self.__peer_.socket_close()
 
     def send_message(self, message, address=None):
-        self.__peer_.client_send_message(message, address)
+        self.__peer_.client_send_message(message, address) # Have to fix for TCP
 
     def receive_message(self, protocol):
         message = self.__peer_.client_receive_message(protocol)

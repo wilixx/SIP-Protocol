@@ -47,7 +47,7 @@ class peer:
     def client_send_message(self, message, address=None):
         message = message.encode('UTF-8')
         if address is None:
-            self.__s.send(message)
+            self.__s.send(message) # Have to fix for TCP, it requires client_socket
         else:
             self.__s.sendto(message, address)
 
@@ -71,7 +71,7 @@ class peer:
             message, addr = self.__s.recvfrom(self._get_buff_size())
         else:
             message = client_socket.recv(self._get_buff_size())
-        return message.decode('UTF-8')
+        return (message.decode('UTF-8'), addr)
 
     def __set_protocol(self, protocol):
         self.__protocol = protocol
