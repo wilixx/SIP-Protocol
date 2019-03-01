@@ -57,7 +57,7 @@ class client:
         return self.__password
 
     def __set_client_address(self):
-        self.__client_address = self.__peer_.get_s_address()
+        self.__client_address = self.__peer_._get_s_address()  # Check get_s_address
 
     def get_client_addr(self):
         return self.__client_address

@@ -49,16 +49,18 @@ class database:
     def __set_table_name(self, table_name):
         self.__statement = 'SELECT name from sqlite_master WHERE type=\"table\"'
         tables = self.__execute_query()
+        tables = [table[0] for table in tables]
         if len(tables) > 0:
-            for table in tables:
-                if table_name in table[0]:
-                    self.__table_name = table_name
+            if table_name in tables:
+                self.__table_name = table_name
+            else:
+                self.__table_name = table_name
+                self.__create_table(table_name,
+                                    self.__client_data_column_types)
         else:
             self.__table_name = table_name
-            if table_name == 'client_data':
-                self.__create_table(self.__client_data_column_types)
-            if table_name == 'transfer_records':
-                self.__create_table(self.__transfer_records_column_types)
+            self.__create_table('client_data', self.__client_data_column_types)
+            self.__create_table('transfer_records', self.__transfer_records_column_types)
 
     def __set_columns(self):
         if self.__table_name == 'client_data':
@@ -82,11 +84,22 @@ class database:
         if columns is None:
             print_statement += '* FROM ' + self.__table_name
         else:
-            for column in columns:
-                print_statement += column + ','
-            print_statement = print_statement.rstrip(', ') + ' FROM ' + \
-                self.__table_name
-        self.__statement = print_statement
+            if type(columns) == type(list()):
+                for column in columns:
+                    print_statement += column + ','
+                print_statement = print_statement.rstrip(',') + ' FROM ' + \
+                    self.__table_name
+                self.__statement = print_statement
+            if type(columns) == type(dict()):
+                for key, value in columns.items():
+                    print_statement += key + ','
+                print_statement = print_statement.rstrip(',') + ' FROM ' + \
+                    self.__table_name
+                print_statement += ' WHERE '
+                for key, value in columns.items():
+                    print_statement += key + '=\"' + value + '\" AND '
+                print_statement = print_statement.rstrip(' AND ')
+                self.__statement = print_statement
         return self.__execute_query()
 
     def insert_records(self, values):
@@ -116,14 +129,14 @@ class database:
         self.__statement = delete_statement
         return self.__execute_query()
 
-    def __create_table(self, columns):
-        create_statement = 'CREATE TABLE ' + 'transfer_records' + ' ('
+    def __create_table(self, table_name, columns):
+        create_statement = 'CREATE TABLE ' + table_name + ' ('
         for column, data_type, constraint in columns:
             create_statement += column + ' ' + data_type + ' ' + constraint + ','
         create_statement = create_statement.rstrip(',')
         create_statement += ')' + ";"
         self.__statement = create_statement
-        print(self.__table_name + ' created')
+        print(table_name + ' created')
         return self.__execute_query()
 
 

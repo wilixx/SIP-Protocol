@@ -20,16 +20,17 @@ class node:
         seq_num = '1'  # Random SEQ num
         call_id = '44asdvasdvasdvag435tqw454q34t'  # Random call id
         from_tag = 'asv3442'
-        branch = 'branch=asdafsbafb87778878sad;rport'
         protocol = 'UDP'
-        request_ = request('REGISTER', self.__client_.get_client_name(),
-                           self.__client_.get_domain(),
-                           self.__client_.get_protocol(),
-                           self.__client_.get_port(), server_name,
-                           server_network_name, seq_num, call_id,
-                           'register packet', self.__client_.get_content_type(),
-                           self.__client_.get_content_sub_type(), from_tag)
-        register_packet = request_.get_packet()
+        register_packet = self._register('REGISTER',
+                                         self.__client_.get_client_name(),
+                                         self.__client_.get_domain(),
+                                         self.__client_.get_protocol(),
+                                         self.__client_.get_port(), server_name,
+                                         server_network_name, seq_num, call_id,
+                                         'register packet',
+                                         self.__client_.get_content_type(),
+                                         self.__client_.get_content_sub_type(),
+                                         from_tag)
         print('Node:\n')
         print(register_packet)
         self.__client_.send_message(register_packet, server_addr)
@@ -49,3 +50,14 @@ class node:
     def __initialize_db(self):
         self.__db = database('client_data')
         # Might have to add database_tests name
+
+    def _register(self, request_type, client_name, domain, protocol, port,
+                  server_name, server_network_name, seq_num, call_id, subject,
+                  content_type, content_sub_type, from_tag):
+        request_ = request(request_type, client_name, domain, protocol, port,
+                          server_name, server_network_name, seq_num, call_id,
+                          subject, content_type, content_sub_type, from_tag)
+        request_.add_authorization(self.__client_.get_username(),
+                                          self.__client_.get_password())
+        request_ = request_.get_packet()
+        return request_

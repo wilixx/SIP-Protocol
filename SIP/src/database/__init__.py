@@ -1,9 +1,9 @@
 '''from database import database
 
 
-db = database('clients', ['username', 'password'])
-a = db.insert_records(['user1', 'pass'])
+db = database('client_data')
+a = db.insert_records(['1', 'CLIENT', '1234'])
 print(a)
-records = db.print_records(['username', 'password'])
-print(records)
-'''
+records = db.print_records(['id'])
+print(records)'''
+from .database import database
