@@ -136,6 +136,8 @@ class registerar:
         update_statement = self.db.update_data({'client_name': client_name, 'client_network_name': client_network_name}, {'subject': subject})
         self.db.execute_statement(update_statement)
 
+    def get_clients(self):
+        return self.__clients
 
     def __initialize_db(self):
         self.__db = database('client_data')  # Might have to add database_tests name
