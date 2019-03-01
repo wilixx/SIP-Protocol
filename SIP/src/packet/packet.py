@@ -11,7 +11,7 @@ class packet:
                  content_type, content_sub_type, from_tag, to_tag):
         self.__make_packet(sender_name, domain, protocol, port,
                            receiver_name, receiver_network_name,
-                           seq_num, request_type, call_id, subject,
+                           seq_num, request_type, call_id, subject,  # SEQ num # Request_type
                            content_type, content_sub_type, from_tag, to_tag)
 
     def get_packet(self):
@@ -62,7 +62,7 @@ class packet:
 
     def __make_packet(self, sender_name, domain, protocol,
                       port, receiver_name,
-                      receiver_network_name, seq_num, call_id, request_type,
+                      receiver_network_name, seq_num, request_type, call_id,
                       subject, content_type, content_sub_type, from_tag,
                       to_tag):
         self.__add_via(protocol, domain, port)

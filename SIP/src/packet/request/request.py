@@ -13,7 +13,7 @@ class request:
         self.__packet_ = packet(sender_name, domain, protocol,
                                 port, receiver_name,
                                 receiver_network_name, seq_num,
-                                call_id, request_type, subject, content_type,
+                                request_type, call_id, subject, content_type,  # SEQ num # Request_type
                                 content_sub_type, from_tag, '')
         self.__add_uri(request_type, receiver_name, domain)
 
