@@ -22,9 +22,15 @@ class request:
                          '@' + domain + ' SIP/2.0' + \
                          self.__packet_.get_packet()
 
-    # def __add_authorization(self, username, password, ):
-    # Can add authorization later on
-    #    self.__packet_
+    def add_authorization(self, username, password):
+        headers = self.__packet_.split('\r\n')
+        authorization_header = 'Authorization: username=' + username + \
+                               ';password=' + password
+        for header in headers:
+            if header[:7] == 'Subject':
+                subject_index = headers.index(header) + 1 # Check var name here
+        headers.insert(subject_index, authorization_header)
+        self.__packet_ = '\r\n'.join(headers)
 
     def get_packet(self):
         return self.__packet_
