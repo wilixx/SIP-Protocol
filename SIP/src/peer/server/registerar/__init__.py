@@ -13,3 +13,5 @@ content_sub_type = 'sdp'
 registerar_ = registerar(server_name, domain, server_network_name,
                          content_type, content_sub_type, protocol,
                          port)
+clients = registerar_.get_clients()
+print(clients)
