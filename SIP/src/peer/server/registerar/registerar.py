@@ -79,12 +79,7 @@ class registerar:
                 print('Client ' + username + ' unauthorized')
         else:
             message = self.__server_.receive_message(client_socket)
-            print('')
-            print('Register message: ')
-            print(message)
-            print('')
             headers = message.split('\r\n')
-            code = '200'
             for header in headers:
                 if header[:4] == 'From':
                     sender_name = header.split('@')[0].split('<')[1].split(':')[
@@ -113,17 +108,33 @@ class registerar:
                     content_sub_type = header.split(': ')[1].split('/')[1]
                 if header[:7] == 'Contact':
                     receiver_network_name = header.split(':')[2].split('@')[0]
+            records = self.__db.print_records({'username': username,
+                                               'password': password})
             to_tag = '423gv2'  # Generate to tag
-            response_ = self._ok(code, sender_name, domain, protocol, port,
-                                 receiver_name, receiver_network_name, seq_num,
-                                 request_type, call_id, subject, content_type,
-                                 content_sub_type, from_tag, to_tag)
-            print('')
-            print('OK message')
-            print(response_)
-            self.__server_.send_message(response_)
-            message = self.__server_.receive_message(client_socket)
-            print(message)
+            if records:
+                code = '200'
+                ok_packet_ = self._ok(code, sender_name, domain, protocol, port,
+                                      receiver_name, receiver_network_name,
+                                      seq_num, request_type, call_id, subject,
+                                      content_type, content_sub_type, from_tag,
+                                      to_tag)
+                self.__server_.send_message(ok_packet_)
+                print('Client ' + username + ' registered')
+                self.__clients.append((username))
+            else:
+                code = '401'
+                unauthorized_packet_ = self._unauthorized(code, sender_name,
+                                                          domain, protocol,
+                                                          port,
+                                                          receiver_name,
+                                                          receiver_network_name,
+                                                          seq_num, request_type,
+                                                          call_id, subject,
+                                                          content_type,
+                                                          content_sub_type,
+                                                          from_tag, to_tag)
+                self.__server_.send_message(unauthorized_packet_)
+                print('Client ' + username + ' unauthorized')
 
     def _deregister_client(self, client_socket=None):
         if client_socket is None:
@@ -165,7 +176,7 @@ class registerar:
                                       content_type, content_sub_type, from_tag,
                                       to_tag)
                 self.__server_.send_message(ok_packet_, client_address)
-                print('Client ' + username + ' registered')
+                print('Client ' + username + ' deregistered')
                 self.__clients.append((username, client_address))
             else:
                 code = '401'
@@ -184,7 +195,7 @@ class registerar:
         else:
             message = self.__server_.receive_message(client_socket)
             print('')
-            print('Register message: ')
+            print('Deregister message: ')
             print(message)
             print('')
             headers = message.split('\r\n')
@@ -233,8 +244,8 @@ class registerar:
                            client_network_name):
         invite_packet_a = self.__s._receive_message(client_socket)
         subject = invite_packet_a.split('Subject ')[1].split('\r\n')[0]
-        update_statement = self.db.update_data({'client_name': client_name, 'client_network_name': client_network_name}, {'subject': subject})
-        self.db.execute_statement(update_statement)
+        # update_statement = self.db.update_data({'client_name': client_name, 'client_network_name': client_network_name}, {'subject': subject})
+        # self.db.execute_statement(update_statement)
 
     def get_clients(self):
         return self.__clients
