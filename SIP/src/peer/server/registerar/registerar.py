@@ -125,9 +125,109 @@ class registerar:
             message = self.__server_.receive_message(client_socket)
             print(message)
 
-    def _deregister_client(self):
-        # Deregister client
-        print('')
+    def _deregister_client(self, client_socket=None):
+        if client_socket is None:
+            (message, client_address) = self.__server_.receive_message(None)
+            headers = message.split('\r\n')  # Obtain information cleaner by adding a function
+            for header in headers:
+                if header[:4] == 'From':
+                    sender_name = header.split('@')[0].split('<')[1].split(':')[1]
+                    from_tag = header.split(';tag=')[1]
+                if header[:3] == 'Via':
+                    domain = header.split(' ')[2].split(';')[0].split(':')[0]
+                    protocol = header.split('/')[2].split(' ')[0]
+                    port = header.split(':')[2].split(';')[0]
+                if header[:2] == 'To':
+                    receiver_name = header.split('@')[0].split(':')[2]
+                if header[:7] == 'Call-ID':
+                    call_id = header.split(': ')[1]
+                if header[:4] == 'CSeq':
+                    seq_num = header.split(' ')[1][:1]
+                    request_type = header.split(' ')[2]
+                if header[:7] == 'Subject':
+                    subject = header.split(': ')[1]
+                if header[:13] == 'Authorization':
+                    username = header.split('username=')[1].split(';')[0]
+                    password = header.split('password=')[1]
+                if header[:12] == 'Content-Type':
+                    content_type = header.split(': ')[1].split('/')[0]
+                    content_sub_type = header.split(': ')[1].split('/')[1]
+                if header[:7] == 'Contact':
+                    receiver_network_name = header.split(':')[2].split('@')[0]
+            records = self.__db.print_records({'username': username,
+                                               'password': password})
+            to_tag = '423gv2' # Generate to tag
+            if records:
+                code = '200'
+                ok_packet_ = self._ok(code, sender_name, domain, protocol, port,
+                                      receiver_name, receiver_network_name,
+                                      seq_num, request_type, call_id, subject,
+                                      content_type, content_sub_type, from_tag,
+                                      to_tag)
+                self.__server_.send_message(ok_packet_, client_address)
+                print('Client ' + username + ' registered')
+                self.__clients.append((username, client_address))
+            else:
+                code = '401'
+                unauthorized_packet_ = self._unauthorized(code, sender_name,
+                                                          domain, protocol, port,
+                                                          receiver_name,
+                                                          receiver_network_name,
+                                                          seq_num, request_type,
+                                                          call_id, subject,
+                                                          content_type,
+                                                          content_sub_type,
+                                                          from_tag, to_tag)
+                self.__server_.send_message(unauthorized_packet_,
+                                            client_address)
+                print('Client ' + username + ' unauthorized')
+        else:
+            message = self.__server_.receive_message(client_socket)
+            print('')
+            print('Register message: ')
+            print(message)
+            print('')
+            headers = message.split('\r\n')
+            code = '200'
+            for header in headers:
+                if header[:4] == 'From':
+                    sender_name = header.split('@')[0].split('<')[1].split(':')[
+                        1]
+                    from_tag = header.split(';tag=')[1]
+                if header[:3] == 'Via':
+                    domain = header.split(' ')[2].split(';')[0].split(':')[0]
+                    protocol = header.split('/')[2].split(' ')[0]
+                    port = header.split(':')[2].split(';')[0]
+                    branch = header.split(';')[1] + ';'
+                    branch += header.split(';')[2].split('=')[0]
+                if header[:2] == 'To':
+                    receiver_name = header.split('@')[0].split(':')[2]
+                if header[:7] == 'Call-ID':
+                    call_id = header.split(': ')[1]
+                if header[:4] == 'CSeq':
+                    seq_num = header.split(' ')[1][:1]
+                    request_type = header.split(' ')[2]
+                if header[:7] == 'Subject':
+                    subject = header.split(': ')[1]
+                if header[:13] == 'Authorization':
+                    username = header.split('username=')[1].split(';')[0]
+                    password = header.split('password=')[1]
+                if header[:12] == 'Content-Type':
+                    content_type = header.split(': ')[1].split('/')[0]
+                    content_sub_type = header.split(': ')[1].split('/')[1]
+                if header[:7] == 'Contact':
+                    receiver_network_name = header.split(':')[2].split('@')[0]
+            to_tag = '423gv2'  # Generate to tag
+            response_ = self._ok(code, sender_name, domain, protocol, port,
+                                 receiver_name, receiver_network_name, seq_num,
+                                 request_type, call_id, subject, content_type,
+                                 content_sub_type, from_tag, to_tag)
+            print('')
+            print('OK message')
+            print(response_)
+            self.__server_.send_message(response_)
+            message = self.__server_.receive_message(client_socket)
+            print(message)
 
     def _establish_session(self, client_socket, seq_num, client_name,
                            client_network_name):
