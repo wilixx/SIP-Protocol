@@ -153,7 +153,5 @@ class node:
         request_ = request('DEREGISTER', client_name, domain, protocol, port,
                            server_name, server_network_name, seq_num, call_id,
                            subject, content_type, content_sub_type, from_tag)
-        request_.add_authorization(self.__client_.get_username(),
-                                   self.__client_.get_password())
         request_ = request_.get_packet()
         return request_
