@@ -1,11 +1,11 @@
 from node import node
 
 # Sample UDP Node
-username = 'CLIENT'
+username = 'CLIEN'
 password = '1234'
 client_name = 'client'
 domain = 'VaaanInfra.com'
-client_network_name = 'client'
+client_network_name = 'Client'
 content_type = 'application'
 content_sub_type = 'sdp'
 protocol = 'UDP'

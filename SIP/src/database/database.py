@@ -7,9 +7,10 @@ import sys
 class database:
 
     __tables = ['client_data', 'transfer_records']
-    __client_data_column_types = [('id', 'int', 'PRIMARY KEY NOT NULL'),
-                                  ('username', 'text', 'NOT NULL'),
-                                  ('password', 'text', 'NOT NULL')]
+    __client_data_column_types = [('id', 'INT', 'NOT NULL PRIMARY KEY'),
+                                  ('username', 'VARCHAR(15)', 'NOT NULL UNIQUE'),
+                                  ('sender_name', 'VARCHAR(15)', 'NOT NULL UNIQUE'),
+                                  ('password', 'VARCHAR(15)', 'NOT NULL')]
     __transfer_records_column_types = [('id', 'int', 'PRIMARY KEY'),
                                        ('sender_name', 'text', 'NOT NULL'),
                                        ('receiver_name', 'text', 'NOT NULL'),
