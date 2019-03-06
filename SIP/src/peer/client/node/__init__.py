@@ -11,12 +11,12 @@ content_sub_type = 'sdp'
 protocol = 'UDP'
 port = '5060'
 
-server_name = 'SIP-Server'
-server_network_name = 'SIP-SERVER'
+receiver_name = 'bob'
+receiver_network_name = 'BOB'
 server_addr = ('192.168.1.218', 5060)
 
 node_ = node(username, password, client_name, domain, client_network_name,
              content_type, content_sub_type, protocol, port)
-node_.register_client(server_name, server_network_name, server_addr)
-node_.establish_session(server_name, server_network_name, server_addr)
-node_.deregister_client(server_name, server_network_name, server_addr)  # If not sent client is not complete and should not send it attempt to connect to server
+node_.register_client(receiver_name, receiver_network_name, server_addr)
+node_.establish_session(receiver_name, receiver_network_name, server_addr)
+node_.deregister_client(receiver_name, receiver_network_name, server_addr)  # If not sent client is not complete and should not send it attempt to connect to server

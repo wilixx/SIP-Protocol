@@ -134,7 +134,7 @@ class registerar:
                     else:  # Put an if condition invite message
                         print('Establish session')
                         self.establish_session(client_info.get('sender_name'),
-                                               client_info.get('reciever_name'))
+                                               client_info.get('receiver_name'))
                 else:
                     code = '401'
                     unauthorized_packet_ = self._unauthorized(code,

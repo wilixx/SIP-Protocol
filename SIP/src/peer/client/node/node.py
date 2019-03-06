@@ -15,9 +15,9 @@ class node:
         self.__client_ = client(username, password, client_name, domain,
                                 protocol, port, client_network_name,
                                 content_type, content_sub_type)
-        # self.__initialize_db()
+        self.__initialize_db()
 
-    def register_client(self, server_name, server_network_name, server_addr):
+    def register_client(self, receiver_name, receiver_network_name, server_addr):
         seq_num = '1'  # Random SEQ num
         call_id = '44asdvasdvasdvag435tqw454q34t'  # Random call id
         from_tag = 'asv3442'
@@ -27,7 +27,7 @@ class node:
                                              self.__client_.get_domain(),
                                              self.__client_.get_protocol(),
                                              self.__client_.get_port(),
-                                             server_name, server_network_name,
+                                             receiver_name, receiver_network_name,
                                              seq_num, call_id, 'REGISTER',
                                              self.__client_.get_content_type(),
                                              self.__client_.get_content_sub_type(),
@@ -40,6 +40,9 @@ class node:
                     ok_packet = packet
                     print('Client ' + self.__client_.get_username() + \
                           ' got registered')
+                    message = self.__client_.receive_message(protocol)
+                    self.establish_session(message, receiver_name,
+                                           receiver_network_name, server_addr)
                 if header[8:11] == '401':
                     unauthorized_packet = packet
                     print('Client ' + self.__client_.get_username() + \
@@ -49,7 +52,7 @@ class node:
                                              self.__client_.get_domain(),
                                              self.__client_.get_protocol(),
                                              self.__client_.get_port(),
-                                             server_name, server_network_name,
+                                             receiver_name, receiver_network_name,
                                              seq_num, call_id, 'REGISTER',
                                              self.__client_.get_content_type(),
                                              self.__client_.get_content_sub_type(),
@@ -62,12 +65,22 @@ class node:
                     ok_packet = packet
                     print('Client ' + self.__client_.get_username() + \
                           ' got registered')
+                    message = self.__client_.receive_message(protocol)
+                    self.establish_session(message, receiver_name,
+                                           receiver_network_name, server_addr)
                 if header[8:11] == '401':
                     unauthorized_packet = packet
                     print('Client ' + self.__client_.get_username() + \
                           ' got Unauthorized')
 
-    def deregister_client(self, server_name, server_network_name, server_addr):
+    # All clients are listening
+    # A client initiates a request
+    # Server tells the client with from to send invite packet
+    # Server tells the client with to to send request packet
+    # From sender sends the invite packet to the server
+    # Server sends the invite packet to the to client
+
+    def deregister_client(self, receiver_name, receiver_network_name, server_addr):
         seq_num = '1'  # Random SEQ num
         call_id = '44asdvasdvasdvag435tqw454q34t'  # Random call id
         from_tag = 'asv3442'
@@ -77,8 +90,8 @@ class node:
                                                  self.__client_.get_domain(),
                                                  self.__client_.get_protocol(),
                                                  self.__client_.get_port(),
-                                                 server_name,
-                                                 server_network_name,
+                                                 receiver_name,
+                                                 receiver_network_name,
                                                  seq_num, call_id, 'DEREGISTER',
                                                  self.__client_.get_content_type(),
                                                  self.__client_.get_content_sub_type(),
@@ -98,14 +111,14 @@ class node:
             self.__client_.disconnect_from_server()
         if protocol == 'TCP':
             deregister_packet = self._deregister(self.__client_.get_client_name(),
-                                               self.__client_.get_domain(),
-                                               self.__client_.get_protocol(),
-                                               self.__client_.get_port(),
-                                               server_name, server_network_name,
-                                               seq_num, call_id, 'DEREGISTER',
-                                               self.__client_.get_content_type(),
-                                               self.__client_.get_content_sub_type(),
-                                               from_tag)
+                                                 self.__client_.get_domain(),
+                                                 self.__client_.get_protocol(),
+                                                 self.__client_.get_port(),
+                                                 receiver_name, receiver_network_name,
+                                                 seq_num, call_id, 'DEREGISTER',
+                                                 self.__client_.get_content_type(),
+                                                 self.__client_.get_content_sub_type(),
+                                                 from_tag)
             self.__client_.send_message(deregister_packet)
             packet = self.__client_.receive_message(protocol)
             headers = packet.split('\r\n')
@@ -120,42 +133,42 @@ class node:
                           ' got Unauthorized')
             self.__client_.disconnect_from_server()
 
-    def establish_session(self, server_name, server_network_name, server_addr):
+    def establish_session(self, message, receiver_name, receiver_network_name, server_addr):
         seq_num = '1'  # Random SEQ num
         call_id = '44asdvasdvasdvag435tqw454q34t'  # Random call id
         from_tag = 'asv3442'
         subject = 'INVITE'
         protocol = self.__client_.get_protocol()
         if protocol == 'UDP':
-            invite_packet = self._invite(self.__client_.get_client_name(),
-                                           self.__client_.get_domain(),
-                                           self.__client_.get_protocol(),
-                                           self.__client_.get_port(),
-                                           server_name, server_network_name,
-                                           seq_num, call_id, subject,
-                                           self.__client_.get_content_type(),
-                                           self.__client_.get_content_sub_type(),
-                                           from_tag)
-            self.__client_.send_message(invite_packet, server_addr)
-            # trying_ = self.__client_.receive_message(protocol)
-            # headers = trying_.split('\r\n')
-            # for header in headers:
-            #    if header[:3] == '200':
-            #        ok_packet = trying_
-            #        print('Client ' + self.__client_.get_username() + \
-            #              ' got registered')
-            #        self.__client_.send_message(ok_packet)
-            #    if header[:3] == '401':
-            #        unauthorized_packet = trying_
-            #        print('Client ' + self.__client_.get_username() + \
-            #              ' got Unauthorized')
-            #        self.__client_.send_message(unauthorized_packet)
+            invite_ = self._invite(self.__client_.get_client_name(),
+                                   self.__client_.get_domain(),
+                                   self.__client_.get_protocol(),
+                                   self.__client_.get_port(),
+                                   receiver_name, receiver_network_name,
+                                   seq_num, call_id, subject,
+                                   self.__client_.get_content_type(),
+                                   self.__client_.get_content_sub_type(),
+                                   from_tag)
+            self.__client_.send_message(invite_, server_addr)
+            trying_ = self.__client_.receive_message(protocol)
+            headers = trying_.split('\r\n')
+            for header in headers:
+                if header[:3] == '200':
+                    ok_packet = trying_
+                    print('Client ' + self.__client_.get_username() + \
+                          ' got registered')
+                    self.__client_.send_message(ok_packet)
+                if header[:3] == '401':
+                    unauthorized_packet = trying_
+                    print('Client ' + self.__client_.get_username() + \
+                          ' got Unauthorized')
+                    self.__client_.send_message(unauthorized_packet)
         if protocol == 'TCP':
             invite_packet = self._invite(self.__client.get_client_name(),
                                          self.__client_.get_domain(),
                                          self.__cleint_.get_protocol(),
                                          self.__cleint_.get_port(),
-                                         server_name, server_network_name,
+                                         receiver_name, receiver_network_name,
                                          seq_num, call_id, subject,
                                          self.__cleint_.get_content_type(),
                                          self.__cleint_.get_content_sub_type(),
