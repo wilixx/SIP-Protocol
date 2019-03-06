@@ -1,17 +1,17 @@
-# from random import choice
-# from string import digits
+from random import choice
+from string import digits
 from SIP.src.peer.server.server import server
 from SIP.src.packet.request.request import request
 from SIP.src.packet.response.response import response
 from SIP.src.database.database import database
-# from SIP.src.peer.client.client import client
+from SIP.src.peer.client.client import client
 
 
 class registerar:
     __server_ = None
     __db = None
 
-    __clients = list() #  Connected client list [(username, client_address)]
+    __clients = list()
 
     def __init__(self, server_name, domain, server_network_name, content_type,
                  content_sub_type, protocol='TCP', port='6050'):
@@ -131,9 +131,10 @@ class registerar:
                             print('Client ' + client_info.get('username') + \
                                   ' unauthorized')
                             # Unable to deregister client
-                    else:
+                    else:  # Put an if condition invite message
                         print('Establish session')
-                        # Establish session
+                        self.establish_session(client_info.get('sender_name'),
+                                               client_info.get('reciever_name'))
                 else:
                     code = '401'
                     unauthorized_packet_ = self._unauthorized(code,
@@ -247,9 +248,12 @@ class registerar:
                                     print('Client ' + client_info.get('username') + \
                                           ' unauthorized')
                                     # Unable to deregister client
-                            else:
+                            else:  # INVITE Packet
                                 print('Establish session')
-                                # Establish session
+                                self.establish_session(client_info
+                                                       .get('sender_name'),
+                                                       client_info
+                                                       .get('receiver_client'))
                 else:
                     code = '401'
                     unauthorized_packet_ = self._unauthorized(code,
@@ -383,12 +387,16 @@ class registerar:
                                                       to_tag)
             return unauthorized_packet_
 
-    def _establish_session(self, client_socket, seq_num, client_name,
-                           client_network_name):
-        invite_packet_a = self.__s._receive_message(client_socket)
-        subject = invite_packet_a.split('Subject ')[1].split('\r\n')[0]
-        # update_statement = self.db.update_data({'client_name': client_name, 'client_network_name': client_network_name}, {'subject': subject})
-        # self.db.execute_statement(update_statement)
+    def establish_session(self, sender_client_name, receiver_client_name):
+        protocol = self.__server_.get_protocol()
+        clients = self.get_clients()
+        print(clients)
+        # if protocol == 'UDP':
+        #    sender_client_addr =
+        #    receiver_client_addr =
+        # if protocol == 'TCP':
+        #    sender_client_socket =
+        #    receiver_client_socket =
 
     def get_clients(self):
         return self.__clients
