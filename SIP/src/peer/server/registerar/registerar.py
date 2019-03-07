@@ -116,6 +116,7 @@ class registerar:
                         print('Client ' + client_info.get('username') + \
                               ' registered')
                     (message, client_address) = self.__server_.receive_message(None)
+                    print(message)  # Check here
                     if message[:10] == 'DEREGISTER':
                         message = self.deregister_client(message)
                         if message[8:11] == '200':
@@ -131,10 +132,12 @@ class registerar:
                             print('Client ' + client_info.get('username') + \
                                   ' unauthorized')
                             # Unable to deregister client
-                    else:  # Put an if condition invite message
+                    if message == 'sender' or message == 'receiver':
+                        (message, client_address) = self.__server_.receive_message(None)
                         print('Establish session')
-                        self.establish_session(client_info.get('sender_name'),
-                                               client_info.get('receiver_name'))
+                        self.estalish_session(message,
+                                              client_info.get('sender_name'),
+                                              client_info.get('receiver_name'))
                 else:
                     code = '401'
                     unauthorized_packet_ = self._unauthorized(code,
@@ -387,10 +390,17 @@ class registerar:
                                                       to_tag)
             return unauthorized_packet_
 
-    def establish_session(self, sender_client_name, receiver_client_name):
+    def establish_session(self, message, sender_client_name, receiver_client_name):
         protocol = self.__server_.get_protocol()
         clients = self.get_clients()
-        print(clients)
+        if message == 'sender':
+            message = self.__server_.receive_message(protocol)
+            client_info = self.obtain_client_info(message)
+
+        if message == 'receiver':
+            message = self.__server_.receive_message(protocol)
+            client_info = self.obtain_client_info(message)
+
         # if protocol == 'UDP':
         #    sender_client_addr =
         #    receiver_client_addr =

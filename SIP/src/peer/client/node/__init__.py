@@ -11,8 +11,8 @@ content_sub_type = 'sdp'
 protocol = 'UDP'
 port = '5060'
 
-receiver_name = 'bob'
-receiver_network_name = 'BOB'
+receiver_name = 'ram'
+receiver_network_name = 'Ram'
 server_addr = ('192.168.1.218', 5060)
 
 node_ = node(username, password, client_name, domain, client_network_name,

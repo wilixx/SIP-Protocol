@@ -41,8 +41,11 @@ class node:
                     print('Client ' + self.__client_.get_username() + \
                           ' got registered')
                     message = self.__client_.receive_message(protocol)
-                    self.establish_session(message, receiver_name,
-                                           receiver_network_name, server_addr)
+                    if message == 'sender_name':
+                        client_info = self.obtain_client_info(ok_packet)
+                        self.establish_session(client_info.get('sender_name'),
+                                               client_info.get('sender_network_name'),
+                                               server_addr)
                 if header[8:11] == '401':
                     unauthorized_packet = packet
                     print('Client ' + self.__client_.get_username() + \
@@ -133,7 +136,7 @@ class node:
                           ' got Unauthorized')
             self.__client_.disconnect_from_server()
 
-    def establish_session(self, message, receiver_name, receiver_network_name, server_addr):
+    def establish_session(self, receiver_name, receiver_network_name, server_addr):
         seq_num = '1'  # Random SEQ num
         call_id = '44asdvasdvasdvag435tqw454q34t'  # Random call id
         from_tag = 'asv3442'
