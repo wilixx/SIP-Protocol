@@ -40,12 +40,13 @@ class node:
                     ok_packet = packet
                     print('Client ' + self.__client_.get_username() + \
                           ' got registered')
-                    message = self.__client_.receive_message(protocol)
+                    # How to know whether the client has to send a message
+                    '''message = self.__client_.receive_message(protocol)
                     if message == 'sender_name':
                         client_info = self.obtain_client_info(ok_packet)
                         self.establish_session(client_info.get('sender_name'),
                                                client_info.get('sender_network_name'),
-                                               server_addr)
+                                               server_addr)'''
                 if header[8:11] == '401':
                     unauthorized_packet = packet
                     print('Client ' + self.__client_.get_username() + \
@@ -136,7 +137,7 @@ class node:
                           ' got Unauthorized')
             self.__client_.disconnect_from_server()
 
-    def establish_session(self, receiver_name, receiver_network_name, server_addr):
+    def sender_establish_session(self, receiver_name, receiver_network_name, server_addr):
         seq_num = '1'  # Random SEQ num
         call_id = '44asdvasdvasdvag435tqw454q34t'  # Random call id
         from_tag = 'asv3442'
@@ -190,6 +191,15 @@ class node:
                     print('Client ' + self.__client_.get_username() + \
                           ' got Unauthorized')
                     self.__client_.send_message(unauthorized_packet)
+
+    def receiver_establish_session(self, sender_name, sender_netowrk_name, server_addr):
+        seq_num = '1'  # Random SEQ num
+        call_id = '142512451235asfvag234r2fd'  # Random call id
+        from_tag = 'asvasv23r23'
+        subject = 'INVITE'
+        protocol = self.__client_.get_protocol()
+        # if protocol == 'UDP':
+            # trying_ = self._trying(sender_name, sender)
 
     def __initialize_db(self):
         self.__db = database('client_data')

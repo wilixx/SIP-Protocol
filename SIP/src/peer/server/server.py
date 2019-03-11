@@ -1,9 +1,12 @@
 from SIP.src.peer.peer import peer
+from threading import Thread
 
 
 class server:
     __peer_ = None
     __max_num_of_clients = 1
+
+    __client_threads = None  # Connected client threads Only with TCP
 
     __server_name = ''
     __domain = ''
@@ -35,7 +38,10 @@ class server:
                 while True:
                     self.__peer_.socket_listen(self._get_max_num_of_clients())
                     (client_socket, addr) = self.__peer_.socket_accept()  # Create new thread for each client
-                    self._exec_func(func, client_socket)
+                    thread = Thread(target=self._exec_func, args=(func, client_socket,))
+                    self.__client_threads.append(thread)
+                    thread.start()
+                    # self._exec_func(func, client_socket)
             except KeyboardInterrupt:
                 print('Closed socket')
             finally:
@@ -44,19 +50,17 @@ class server:
             try:
                 while True:
                     self._exec_func(func)
-            except KeyboardInterrupt:
+            except KeyboardInterrupt or Exception:
                 print('Closed socket')
             finally:
                 self.__peer_.socket_close()
 
 
     def _exec_func(self, func, client_socket=None):
-        if func.__name__ == 'register_client':
-            # Can also segregate by protocol
-            if client_socket is None:
-                return func()
-            else:
-                return func(client_socket)
+        if func.__name__ == 'udp_register_client':
+            return func()
+        if func.__name__ == 'tcp_register_client':
+            return func(client_socket)
         # Have to add transfer server
 
     def send_message(self, message, address=None, client_socket=None):

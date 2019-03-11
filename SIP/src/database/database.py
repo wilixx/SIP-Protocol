@@ -2,6 +2,7 @@ from sqlite3 import connect
 from sqlite3 import Error
 from os.path import exists
 import sys
+import traceback
 
 
 class database:
@@ -76,6 +77,7 @@ class database:
             return rows
         except Error:
             print(Error)
+            traceback.print_stack(Error)
 
     def __disconnect_from_server(self):
         self.__conn.close()

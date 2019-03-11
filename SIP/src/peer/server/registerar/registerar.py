@@ -1,5 +1,6 @@
 from random import choice
 from string import digits
+from threading import Thread
 from SIP.src.peer.server.server import server
 from SIP.src.packet.request.request import request
 from SIP.src.packet.response.response import response
@@ -15,11 +16,13 @@ class registerar:
 
     def __init__(self, server_name, domain, server_network_name, content_type,
                  content_sub_type, protocol='TCP', port='6050'):
-        self.__initialize_db()
         self.__server_ = server(server_name, domain, protocol,
                                 port, server_network_name, content_type,
                                 content_sub_type)
-        self.__server_.create_server(self.register_client)
+        if protocol == 'TCP':
+            self.__server_.create_server(self.tcp_register_client)
+        if protocol == 'UDP':
+            self.__server_.create_server(self.udp_register_client)
 
     def obtain_client_info(self, message):
         username = None
@@ -69,9 +72,17 @@ class registerar:
         }
         return client_info
 
+    def tcp_register_client(self, client_socket):
+        self.register_client(client_socket)
+
+    def udp_register_client(self):
+        thread = Thread(target=self.register_client)
+        thread.start()
+
     def register_client(self, client_socket=None):
         if client_socket is None:
             (message, client_address) = self.__server_.receive_message(None)
+            self.__initialize_db()
             if message[:8] == 'REGISTER':
                 client_info = self.obtain_client_info(message)
                 records = self.__db.print_records({
@@ -132,12 +143,15 @@ class registerar:
                             print('Client ' + client_info.get('username') + \
                                   ' unauthorized')
                             # Unable to deregister client
-                    if message == 'sender' or message == 'receiver':
+                    if message[:6] == 'INVITE':
+                        invite_ = message
+                        self.establish_session(invite_)
+                    '''if message == 'sender' or message == 'receiver': # Wrong
                         (message, client_address) = self.__server_.receive_message(None)
                         print('Establish session')
                         self.estalish_session(message,
                                               client_info.get('sender_name'),
-                                              client_info.get('receiver_name'))
+                                              client_info.get('receiver_name'))'''
                 else:
                     code = '401'
                     unauthorized_packet_ = self._unauthorized(code,
@@ -192,6 +206,7 @@ class registerar:
                 self.__server_.send_message(unauthorized_packet_, client_address)
         else:
             message = self.__server_.receive_message(client_socket)
+            self.__initialize_db()
             if message[:8] == 'REGISTER':
                 client_info = self.__obtain_client_info(message)
                 records = self.__db.print_records({
@@ -390,23 +405,11 @@ class registerar:
                                                       to_tag)
             return unauthorized_packet_
 
-    def establish_session(self, message, sender_client_name, receiver_client_name):
+    def establish_session(self, message, client_address=None, client_socket=None):
         protocol = self.__server_.get_protocol()
         clients = self.get_clients()
-        if message == 'sender':
-            message = self.__server_.receive_message(protocol)
-            client_info = self.obtain_client_info(message)
-
-        if message == 'receiver':
-            message = self.__server_.receive_message(protocol)
-            client_info = self.obtain_client_info(message)
-
-        # if protocol == 'UDP':
-        #    sender_client_addr =
-        #    receiver_client_addr =
-        # if protocol == 'TCP':
-        #    sender_client_socket =
-        #    receiver_client_socket =
+        print(message)
+        print(client_address)
 
     def get_clients(self):
         return self.__clients
