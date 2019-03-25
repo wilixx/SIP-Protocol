@@ -34,6 +34,7 @@ class node:
                                              from_tag)
             self.__client_.send_message(register_packet, server_addr)
             packet = self.__client_.receive_message(protocol)
+            print(packet)
             headers = packet.split('\r\n')
             for header in headers:
                 if header[8:11] == '200':
@@ -76,13 +77,6 @@ class node:
                     unauthorized_packet = packet
                     print('Client ' + self.__client_.get_username() + \
                           ' got Unauthorized')
-
-    # All clients are listening
-    # A client initiates a request
-    # Server tells the client with from to send invite packet
-    # Server tells the client with to to send request packet
-    # From sender sends the invite packet to the server
-    # Server sends the invite packet to the to client
 
     def deregister_client(self, receiver_name, receiver_network_name, server_addr):
         seq_num = '1'  # Random SEQ num
@@ -154,19 +148,26 @@ class node:
                                    self.__client_.get_content_sub_type(),
                                    from_tag)
             self.__client_.send_message(invite_, server_addr)
-            trying_ = self.__client_.receive_message(protocol)
-            headers = trying_.split('\r\n')
-            for header in headers:
-                if header[:3] == '200':
-                    ok_packet = trying_
-                    print('Client ' + self.__client_.get_username() + \
-                          ' got registered')
-                    self.__client_.send_message(ok_packet)
-                if header[:3] == '401':
-                    unauthorized_packet = trying_
-                    print('Client ' + self.__client_.get_username() + \
-                          ' got Unauthorized')
-                    self.__client_.send_message(unauthorized_packet)
+            trying_ = self._trying(self.__client_.get_client_name(),
+                                   self.__client_.get_domain(),
+                                   self.__client_.get_protocol(),
+                                   self.__client_.get_port(),
+                                   receiver_name, receiver_network_name,
+                                   seq_num, call_id, subject,
+                                   self.__client_.get_content_type(),
+                                   self.__client_.get_content_sub_type(),
+                                   from_tag)
+            self.__client_.send_message(trying_, server_addr)
+            ringing_ = self._ringing(self.__client_.get_client_name(),
+                                    self.__client_.get_domain(),
+                                    self.__client_.get_protocol(),
+                                    self.__client_.get_port(),
+                                    receiver_name, receiver_network_name,
+                                    seq_num, call_id, subject,
+                                    self.__client_.get_content_type(),
+                                    self.__client_.get_content_sub_type(),
+                                    from_tag)
+            self.__client_.send_message(ringing_, server_addr)
         if protocol == 'TCP':
             invite_packet = self._invite(self.__client.get_client_name(),
                                          self.__client_.get_domain(),
@@ -192,18 +193,8 @@ class node:
                           ' got Unauthorized')
                     self.__client_.send_message(unauthorized_packet)
 
-    def receiver_establish_session(self, sender_name, sender_netowrk_name, server_addr):
-        seq_num = '1'  # Random SEQ num
-        call_id = '142512451235asfvag234r2fd'  # Random call id
-        from_tag = 'asvasv23r23'
-        subject = 'INVITE'
-        protocol = self.__client_.get_protocol()
-        # if protocol == 'UDP':
-            # trying_ = self._trying(sender_name, sender)
-
     def __initialize_db(self):
         self.__db = database('client_data')
-        # Might have to add database_tests name
 
     def _invite(self, client_name, domain, protocol, port, server_name,
                 server_network_name, seq_num, call_id, subject, content_type,
@@ -214,37 +205,37 @@ class node:
         request_ = request_.get_packet()
         return request_
 
-    def _trying(self, code, sender_name, domain, protocol, port,
+    def _trying(self, sender_name, domain, protocol, port,
             receiver_name, receiver_network_name, seq_num,
-            request_type, call_id, subject, content_type, content_sub_type,
-            from_tag, to_tag):
-        response_ = response(code, sender_name, domain,
+            call_id, subject, content_type, content_sub_type,
+            from_tag):
+        request_ = request('TRYING', sender_name, domain,
                              protocol, port, receiver_name,
-                             receiver_network_name, seq_num, request_type,
+                             receiver_network_name, seq_num,
                              call_id, subject, content_type,
-                             content_sub_type, from_tag, to_tag)
-        response_ = response_.get_packet()
-        return response_
+                             content_sub_type, from_tag)
+        request_ = request_.get_packet()
+        return request_
 
-    def _ringing(self, code, sender_name, domain, protocol, port,
+    def _ringing(self, sender_name, domain, protocol, port,
             receiver_name, receiver_network_name, seq_num,
-            request_type, call_id, subject, content_type, content_sub_type,
-            from_tag, to_tag):
-        response_ = response(code, sender_name, domain,
+            call_id, subject, content_type, content_sub_type,
+            from_tag):
+        request_ = request('RINGING', sender_name, domain,
                              protocol, port, receiver_name,
-                             receiver_network_name, seq_num, request_type,
+                             receiver_network_name, seq_num,
                              call_id, subject, content_type,
-                             content_sub_type, from_tag, to_tag)
-        response_ = response_.get_packet()
-        return response_
+                             content_sub_type, from_tag)
+        request_ = request_.get_packet()
+        return request_
 
-    def _ok(self, code, sender_name, domain, protocol, port,
+    def _ok(self, sender_name, domain, protocol, port,
             receiver_name, receiver_network_name, seq_num,
-            request_type, call_id, subject, content_type, content_sub_type,
+            call_id, subject, content_type, content_sub_type,
             from_tag, to_tag):
-        response_ = response(code, sender_name, domain,
+        response_ = response('OK', sender_name, domain,
                              protocol, port, receiver_name,
-                             receiver_network_name, seq_num, request_type,
+                             receiver_network_name, seq_num, 'OK',
                              call_id, subject, content_type,
                              content_sub_type, from_tag, to_tag)
         response_ = response_.get_packet()

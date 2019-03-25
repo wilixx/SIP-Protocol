@@ -73,118 +73,82 @@ class registerar:
         return client_info
 
     def tcp_register_client(self, client_socket):
+        message = self.__server_.receive_message(client_socket)
         self.register_client(client_socket)
 
     def udp_register_client(self):
-        thread = Thread(target=self.register_client)
-        thread.start()
+        (message, client_address) = self.__server_.receive_message(None)
+        print(message)
+        if message[:8] == 'REGISTER':
+            thread = Thread(target=self.register_client, args=(message, client_address))
+            thread.start()
+        else:
+            print('Unable to register')
 
-    def register_client(self, client_socket=None):
+    def register_client(self, message, client_address=None, client_socket=None):
         if client_socket is None:
-            (message, client_address) = self.__server_.receive_message(None)
             self.__initialize_db()
-            if message[:8] == 'REGISTER':
-                client_info = self.obtain_client_info(message)
-                records = self.__db.print_records({
-                                                    'username':
-                                                        client_info.get('username'),
-                                                    'password':
-                                                        client_info.get('password'),
-                                                    'sender_name':
-                                                        client_info.
-                                                            get('sender_name')
-                                                  })
-                to_tag = '423gv2' # Generate to tag & sender tag becomes receiver's from tag
-                if records:
-                    code = '200'
-                    ok_packet_ = self._ok(code, client_info.get('sender_name'),
-                                          client_info.get('domain'),
-                                          client_info.get('protocol'),
-                                          client_info.get('port'),
-                                          client_info.get('receiver_name'),
-                                          client_info.get('receiver_network_name'),
-                                          client_info.get('seq_num'),
-                                          client_info.get('request_type'),
-                                          client_info.get('call_id'),
-                                          'OK',
-                                          client_info.get('content_type'),
-                                          client_info.get('content_sub_type'),
-                                          client_info.get('from_tag'),
-                                          to_tag)
-                    self.__server_.send_message(ok_packet_, client_address)
-                    client_exists = False  # Remove flag
-                    for client in self.__clients:
-                        if client_info.get('username') in client:
-                            client_exists = True
-                    if client_exists:
-                        print('Client ' + client_info.get('username') + \
-                              ' already registered')
-                        return None
-                    else:
-                        self.__clients.append((client_info.get('username'),
-                                               client_info.get('sender_name'),
-                                               client_address))
-                        print('Client ' + client_info.get('username') + \
-                              ' registered')
-                    (message, client_address) = self.__server_.receive_message(None)
-                    print(message)  # Check here
-                    if message[:10] == 'DEREGISTER':
-                        message = self.deregister_client(message)
-                        if message[8:11] == '200':
-                            ok_packet_ = message
-                            self.__server_.send_message(ok_packet_,
-                                                        client_address)
-                            print('Client ' + client_info.get('username') + \
-                                  ' deregistered')
-                        if message[8:11] == '401':
-                            unauthorized_packet_ = message
-                            self.__server_.send_message(unauthorized_packet_,
-                                                        client_address)
-                            print('Client ' + client_info.get('username') + \
-                                  ' unauthorized')
-                            # Unable to deregister client
-                    if message[:6] == 'INVITE':
-                        invite_ = message
-                        self.establish_session(invite_)
-                    '''if message == 'sender' or message == 'receiver': # Wrong
-                        (message, client_address) = self.__server_.receive_message(None)
-                        print('Establish session')
-                        self.estalish_session(message,
-                                              client_info.get('sender_name'),
-                                              client_info.get('receiver_name'))'''
-                else:
-                    code = '401'
-                    unauthorized_packet_ = self._unauthorized(code,
-                                                              client_info
-                                                                .get('sender_name'),
-                                                              client_info
-                                                                .get('domain'),
-                                                              client_info
-                                                                .get('protocol'),
-                                                              client_info
-                                                                .get('port'),
-                                                              client_info
-                                                                .get('receiver_name'),
-                                                              client_info
-                                                                .get('receiver_network_name'),
-                                                              client_info
-                                                                .get('seq_num'),
-                                                              client_info
-                                                                .get('request_type'),
-                                                              client_info
-                                                                .get('call_id'),
-                                                              'Unauthorized',
-                                                              client_info
-                                                                .get('content_type'),
-                                                              client_info
-                                                                .get('content_sub_type'),
-                                                              client_info
-                                                                .get('from_tag'),
-                                                              to_tag)
-                    self.__server_.send_message(unauthorized_packet_,
-                                                client_address)
+            client_info = self.obtain_client_info(message)
+            records = self.__db.print_records({
+                                                'username':
+                                                    client_info.get('username'),
+                                                'password':
+                                                    client_info.get('password'),
+                                                'sender_name':
+                                                    client_info.
+                                                        get('sender_name')
+                                               })
+            to_tag = '423gv2'
+            if records:
+                code = '200'
+                ok_packet_ = self._ok(code, client_info.get('sender_name'),
+                                      client_info.get('domain'),
+                                      client_info.get('protocol'),
+                                      client_info.get('port'),
+                                      client_info.get('receiver_name'),
+                                      client_info.get('receiver_network_name'),
+                                      client_info.get('seq_num'),
+                                      client_info.get('request_type'),
+                                      client_info.get('call_id'),
+                                      'OK',
+                                      client_info.get('content_type'),
+                                      client_info.get('content_sub_type'),
+                                      client_info.get('from_tag'),
+                                      to_tag)
+                self.__server_.send_message(ok_packet_, client_address)
+                client_exists = False  # Remove flag
+                for client in self.__clients:
+                    if client_info.get('username') in client:
+                        client_exists = True
+                if client_exists:
                     print('Client ' + client_info.get('username') + \
-                          ' unauthorized')
+                          ' already registered')
+                    return None
+                else:
+                    self.__clients.append((client_info.get('username'),
+                                           client_info.get('sender_name'),
+                                           client_address))
+                    print('Client ' + client_info.get('username') + \
+                          ' registered')
+                (message, client_address) = self.__server_.receive_message(None)
+                print(message)
+                if message[:10] == 'DEREGISTER':
+                    message = self.deregister_client(message)
+                    if message[8:11] == '200':
+                        ok_packet_ = message
+                        self.__server_.send_message(ok_packet_,
+                                                    client_address)
+                        print('Client ' + client_info.get('username') + \
+                              ' deregistered')
+                    if message[8:11] == '401':
+                        unauthorized_packet_ = message
+                        self.__server_.send_message(unauthorized_packet_,
+                                                    client_address)
+                        print('Client ' + client_info.get('username') + \
+                              ' unauthorized')
+                if message[:6] == 'INVITE':
+                    invite_ = message
+                    self.establish_session(invite_, client_address=client_address)
             else:
                 code = '401'
                 to_tag = '423gv2'  # Generate to tag & sender tag becomes receiver's from tag
@@ -204,110 +168,74 @@ class registerar:
                                                           client_info.get('from_tag'),
                                                           to_tag)
                 self.__server_.send_message(unauthorized_packet_, client_address)
+                print('Client ' + client_info.get('username') + \
+                      ' unauthorized')
         else:
-            message = self.__server_.receive_message(client_socket)
             self.__initialize_db()
-            if message[:8] == 'REGISTER':
-                client_info = self.__obtain_client_info(message)
-                records = self.__db.print_records({
-                                                    'username':
-                                                      client_info.get('username'),
-                                                    'password':
-                                                      client_info.get('password'),
-                                                    'sender_name':
-                                                      client_info.
-                                                        get('sender_name')
-                                                  })
-                to_tag = '423gv2'  # Generate to tag
-                if records:
-                    code = '200'
-                    ok_packet_ = self._ok(code, client_info.get('sender_name'),
-                                          client_info.get('domain'),
-                                          client_info.get('protocol'),
-                                          client_info.get('port'),
-                                          client_info.get('receiver_name'),
-                                          client_info.get('receiver_network_name'),
-                                          client_info.get('seq_num'),
-                                          client_info.get('request_type'),
-                                          client_info.get('call_id'),
-                                          'OK',
-                                          client_info.get('content_type'),
-                                          client_info.get('content_sub_type'),
-                                          client_info.get('from_tag'),
-                                          to_tag)
-                    self.__server_.send_message(ok_packet_)
-                    client_exists = False  # Remove flag
-                    for client in self.__clients:
-                        if client_info.get('username') in client:
-                            client_exists = True
-                        if client_exists:
-                            print('Client ' + client_info.get('username') + \
-                                  ' already registered')
-                            return None
-                        else:
-                            self.__clients.append((client_info.get('username'),
-                                                   client_info.get('sender_name'),
-                                                   client_socket))
-                            print('Client ' + client_info.get('username') + \
-                                  ' registered')
-                            (message, client_address) = self.__server_.receive_message(client_socket)
-                            if message[:10] == 'DEREGISTER':
-                                message = self.deregister_client(message)
-                                if message[8:11] == '200':
-                                    ok_packet_ = message
-                                    self.__server_.send_message(ok_packet_,
-                                                                client_socket)
-                                    print('Client ' + client_info.get('username') + \
-                                          ' deregistered')
-                                if message[8:11] == '401':
-                                    unauthorized_packet_ = message
-                                    self.__server_.send_message(unauthorized_packet_,
-                                                                client_socket)
-                                    print('Client ' + client_info.get('username') + \
-                                          ' unauthorized')
-                                    # Unable to deregister client
-                            else:  # INVITE Packet
-                                print('Establish session')
-                                self.establish_session(client_info
-                                                       .get('sender_name'),
-                                                       client_info
-                                                       .get('receiver_client'))
-                else:
-                    code = '401'
-                    unauthorized_packet_ = self._unauthorized(code,
-                                                              client_info
-                                                              .get('sender_name'),
-                                                              client_info
-                                                              .get('domain'),
-                                                              client_info
-                                                              .get('protocol'),
-                                                              client_info
-                                                              .get('port'),
-                                                              client_info
-                                                              .get('receiver_name'),
-                                                              client_info
-                                                              .get(
-                                                                'receiver_network_name'
-                                                              ),
-                                                              client_info
-                                                                .get('seq_num'),
-                                                              client_info
-                                                                .get('request_type'),
-                                                              client_info
-                                                                .get('call_id'),
-                                                              'Unauthorized',
-                                                              client_info
-                                                                .get('content_type'),
-                                                              client_info
-                                                                 .get(
-                                                                    'content_sub_type'
-                                                                ),
-                                                              client_info
-                                                                .get('from_tag'),
-                                                              to_tag)
-                    self.__server_.send_message(unauthorized_packet_)
-                    print('Client ' + client_info.get('username') + \
-                          ' unauthorized')
+            client_info = self.__obtain_client_info(message)
+            records = self.__db.print_records({
+                                               'username':
+                                                   client_info.get('username'),
+                                               'password':
+                                                   client_info.get('password'),
+                                               'sender_name':
+                                                   client_info.
+                                                       get('sender_name')
+                                               })
+            to_tag = '423gv2'  # Generate to tag
+            if records:
+                code = '200'
+                ok_packet_ = self._ok(code, client_info.get('sender_name'),
+                                      client_info.get('domain'),
+                                      client_info.get('protocol'),
+                                      client_info.get('port'),
+                                      client_info.get('receiver_name'),
+                                      client_info.get('receiver_network_name'),
+                                      client_info.get('seq_num'),
+                                      client_info.get('request_type'),
+                                      client_info.get('call_id'),
+                                      'OK',
+                                      client_info.get('content_type'),
+                                      client_info.get('content_sub_type'),
+                                      client_info.get('from_tag'),
+                                      to_tag)
+                self.__server_.send_message(ok_packet_)
+                client_exists = False  # Remove flag
+                for client in self.__clients:
+                    if client_info.get('username') in client:
+                        client_exists = True
+                    if client_exists:
+                        print('Client ' + client_info.get('username') + \
+                              ' already registered')
+                        return None
+                    else:
+                        self.__clients.append((client_info.get('username'),
+                                               client_info.get('sender_name'),
+                                               client_socket))
+                        print('Client ' + client_info.get('username') + \
+                              ' registered')
+                        (message, client_address) = self.__server_.receive_message(client_socket)
+                        if message[:10] == 'DEREGISTER':
+                            message = self.deregister_client(message)
+                            if message[8:11] == '200':
+                                ok_packet_ = message
+                                self.__server_.send_message(ok_packet_,
+                                                            client_socket)
+                                print('Client ' + client_info.get('username') + \
+                                      ' deregistered')
+                            if message[8:11] == '401':
+                                unauthorized_packet_ = message
+                                self.__server_.send_message(unauthorized_packet_,
+                                                            client_socket)
+                                print('Client ' + client_info.get('username') + \
+                                      ' unauthorized')
+                                # Unable to deregister client
+                        else:  # INVITE Packet
+                            print('Establish session')
+                            self.establish_session(client_info
+                                                        .get('sender_name'),
+                                                    client_info
+                                                        .get('receiver_client'))
             else:
                 code = '401'
                 to_tag = '423gv2'  # Generate to tag & sender tag becomes receiver's from tag
@@ -349,6 +277,8 @@ class registerar:
                                                           ),
                                                           to_tag)
                 self.__server_.send_message(unauthorized_packet_, client_socket)
+                print('Client ' + client_info.get('username') + \
+                      ' unauthorized')
 
     def deregister_client(self, message):  # Requires a sender_name and a sender_network_name to deregister from client
         client_info = self.obtain_client_info(message)
@@ -406,47 +336,41 @@ class registerar:
             return unauthorized_packet_
 
     def establish_session(self, message, client_address=None, client_socket=None):
-        protocol = self.__server_.get_protocol()
-        clients = self.get_clients()
-        print(message)
-        print(client_address)
+        invite_ = message
+        (message, client_address) = self.__server_.receive_message(None)
+        if message[:6] == 'TRYING':
+            trying_ = message
+            print(trying_)
+        (message, client_address) = self.__server_.receive_message(None)
+        if message[:7] == 'RINGING':
+            ringing_ = message
+            print(ringing_)
+        (message, client_address) = self.__server_.receive_message(None)
+        ack_ = ack_()
+        if message[:10] == 'DEREGISTER':
+            deregister_ = message
+            print(deregister_)
+            message = self.deregister_client(deregister_)
+            client_info = self.obtain_client_info(message)
+            if message[8:11] == '200':
+                ok_packet_ = message
+                self.__server_.send_message(ok_packet_,
+                                            client_address)
+                print('Client ' + client_info.get('username') + \
+                      ' deregistered')
+            if message[8:11] == '401':
+                unauthorized_packet_ = message
+                self.__server_.send_message(unauthorized_packet_,
+                                            client_address)
+                print('Client ' + client_info.get('username') + \
+                      ' unauthorized')
+
 
     def get_clients(self):
         return self.__clients
 
     def __initialize_db(self):
         self.__db = database('client_data')  # Might have to add database_tests name
-
-    # def __register_client_to_database(self):
-
-        # payload = client_socket.recv(self.buff_size).decode('UTF-8')
-        # print(payload)
-        # print('')
-        # display_statement = self.db.display_data({'client_name': client_name})
-        # self.db.execute_statement(display_statement)
-        # invite_packet_b = self.invite(1)
-        # print(invite_packet_b)
-
-        # Server receives invite packet from client1
-        # Server sends invite packet to client2
-
-        # Server sends client2 request to receive file
-        # Server receives trying packet from client1
-        # Server sends client2 trying packet
-        # Server receives ringing packet from client1
-        # Server sends client2 ringing packet
-        # Server receives ok packet from client1
-        # Server sends client2 ok packet
-
-        # Server receives ack packet from client1
-        # Server sends ack packet to client2
-
-        # Start file transfer_tests from client1 to client2
-
-        # Client1 sends bye packet to server
-        # Server sends bye packet to client2
-        # Client1 sends ok packet to server
-        # Server sends ok packet to client2
 
     def _invite(self, sender_name, domain, protocol, port, receiver_name,
                 receiver_network_name, seq_num, call_id,
@@ -489,6 +413,8 @@ class registerar:
                              content_sub_type, from_tag, to_tag)
         response_ = response_.get_packet()
         return response_
+
+    def _ack(self, ):
 
     def _unauthorized(self, code, sender_name, domain, protocol, port,
                       receiver_name, receiver_network_name, seq_num, request_type,

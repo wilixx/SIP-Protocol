@@ -9,6 +9,7 @@ server_network_name = 'BOB'
 content_type = 'application'
 content_sub_type = 'sdp'
 
+# Error in registerar
 
 registerar_ = registerar(server_name, domain, server_network_name,
                          content_type, content_sub_type, protocol,
