@@ -24,9 +24,22 @@ class registerar:
         if protocol == 'UDP':
             self.__server_.create_server(self.udp_register_client)
 
-    def obtain_client_info(self, message):
+    def __obtain_client_info(self, message):
         username = None
         password = None
+        sender_name = None
+        receiver_name = None
+        receiver_network_name = None
+        domain = None
+        port = None
+        content_type = None
+        content_sub_type = None
+        protocol = None
+        subject = None
+        seq_num = None
+        request_type = None
+        from_tag = None
+        call_id = None
         headers = message.split('\r\n')
         for header in headers:
             if header[:4] == 'From':
@@ -74,7 +87,9 @@ class registerar:
 
     def tcp_register_client(self, client_socket):
         message = self.__server_.receive_message(client_socket)
-        self.register_client(client_socket)
+        print(message)
+        if message[:8] == 'REGISTER':
+            self.register_client(message, client_socket=client_socket)
 
     def udp_register_client(self):
         (message, client_address) = self.__server_.receive_message(None)
@@ -88,7 +103,7 @@ class registerar:
     def register_client(self, message, client_address=None, client_socket=None):
         if client_socket is None:
             self.__initialize_db()
-            client_info = self.obtain_client_info(message)
+            client_info = self.__obtain_client_info(message)
             records = self.__db.print_records({
                                                 'username':
                                                     client_info.get('username'),
@@ -184,13 +199,13 @@ class registerar:
                                                })
             to_tag = '423gv2'  # Generate to tag
             if records:
-                code = '200'
+                code = '200'  # Fix Contact
                 ok_packet_ = self._ok(code, client_info.get('sender_name'),
                                       client_info.get('domain'),
                                       client_info.get('protocol'),
                                       client_info.get('port'),
-                                      client_info.get('receiver_name'),
-                                      client_info.get('receiver_network_name'),
+                                      '',
+                                      '',
                                       client_info.get('seq_num'),
                                       client_info.get('request_type'),
                                       client_info.get('call_id'),
@@ -199,6 +214,7 @@ class registerar:
                                       client_info.get('content_sub_type'),
                                       client_info.get('from_tag'),
                                       to_tag)
+                ok_packet_ = response.remove_header(ok_packet_, 'To')
                 self.__server_.send_message(ok_packet_)
                 client_exists = False  # Remove flag
                 for client in self.__clients:
@@ -214,7 +230,8 @@ class registerar:
                                                client_socket))
                         print('Client ' + client_info.get('username') + \
                               ' registered')
-                        (message, client_address) = self.__server_.receive_message(client_socket)
+                        message = self.__server_.receive_message(client_socket)
+                        print(message)
                         if message[:10] == 'DEREGISTER':
                             message = self.deregister_client(message)
                             if message[8:11] == '200':
@@ -229,8 +246,7 @@ class registerar:
                                                             client_socket)
                                 print('Client ' + client_info.get('username') + \
                                       ' unauthorized')
-                                # Unable to deregister client
-                        else:  # INVITE Packet
+                        else:
                             print('Establish session')
                             self.establish_session(client_info
                                                         .get('sender_name'),
@@ -281,7 +297,7 @@ class registerar:
                       ' unauthorized')
 
     def deregister_client(self, message):  # Requires a sender_name and a sender_network_name to deregister from client
-        client_info = self.obtain_client_info(message)
+        client_info = self.__obtain_client_info(message)
         to_tag = '423gv2' # Generate to tag
         client_exists = False
         for client in self.__clients:
@@ -346,12 +362,12 @@ class registerar:
             ringing_ = message
             print(ringing_)
         (message, client_address) = self.__server_.receive_message(None)
-        ack_ = ack_()
+        # ack_ = ack_()
         if message[:10] == 'DEREGISTER':
             deregister_ = message
             print(deregister_)
             message = self.deregister_client(deregister_)
-            client_info = self.obtain_client_info(message)
+            client_info = self.__obtain_client_info(message)
             if message[8:11] == '200':
                 ok_packet_ = message
                 self.__server_.send_message(ok_packet_,
@@ -413,8 +429,6 @@ class registerar:
                              content_sub_type, from_tag, to_tag)
         response_ = response_.get_packet()
         return response_
-
-    def _ack(self, ):
 
     def _unauthorized(self, code, sender_name, domain, protocol, port,
                       receiver_name, receiver_network_name, seq_num, request_type,

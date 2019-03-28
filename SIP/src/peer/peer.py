@@ -46,32 +46,34 @@ class peer:
 
     def client_send_message(self, message, address=None):
         message = message.encode('UTF-8')
-        if address is None:
-            self.__s.send(message) # Have to fix for TCP, it requires client_socket
-        else:
+        if address:
             self.__s.sendto(message, address)
+        else:
+            self.__s.send(message)
 
     def client_receive_message(self, protocol):
         if protocol == 'TCP':
-            message = self.__s.recv(self._get_buff_size())  # Client socket.recv maybe be the correct method
+            message = self.__s.recv(self._get_buff_size())
+            return message.decode('UTF-8')
         if protocol == 'UDP':
             message, addr = self.__s.recvfrom(self._get_buff_size())
-        return message.decode('UTF-8')
+            return (message.decode('UTF-8'), addr)
 
-    def server_send_message(self, protocol, message, client_socket=None,
+    def server_send_message(self, message, client_socket=None,
                             address=None):
         message = message.encode('UTF-8')
-        if protocol == 'TCP':
+        if client_socket:
             client_socket.send(message)
-        if protocol == 'UDP':
+        else:
             self.__s.sendto(message, address)
 
     def server_receive_message(self, client_socket=None):
-        if client_socket is None:
-            message, addr = self.__s.recvfrom(self._get_buff_size())
-        else:
+        if client_socket:
             message = client_socket.recv(self._get_buff_size())
-        return (message.decode('UTF-8'), addr)
+            return message.decode('UTF-8')
+        else:
+            message, addr = self.__s.recvfrom(self._get_buff_size())
+            return (message.decode('UTF-8'), addr)
 
     def __set_protocol(self, protocol):
         self.__protocol = protocol

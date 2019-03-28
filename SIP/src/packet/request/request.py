@@ -32,5 +32,14 @@ class request:
         headers.insert(subject_index, authorization_header)
         self.__packet_ = '\r\n'.join(headers)
 
+    @staticmethod
+    def remove_header(packet, header_name):
+        headers = packet.split('\r\n')
+        for header in headers:
+            if header[:2] == header_name:
+                headers.remove(header)
+        packet = '\r\n'.join(headers)
+        return packet
+
     def get_packet(self):
         return self.__packet_

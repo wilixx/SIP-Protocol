@@ -11,7 +11,7 @@ class packet:
                  content_type, content_sub_type, from_tag, to_tag):
         self.__make_packet(sender_name, domain, protocol, port,
                            receiver_name, receiver_network_name,
-                           seq_num, request_type, call_id, subject,  # SEQ num # Request_type
+                           seq_num, request_type, call_id, subject,
                            content_type, content_sub_type, from_tag, to_tag)
 
     def get_packet(self):
@@ -46,9 +46,16 @@ class packet:
         else:
             self.__packet += '\r\nCall-ID: ' + call_id
 
-    def __add_contact(self, receiver_network_name, receiver_name, domain):
-        self.__packet += '\r\nContact: ' + receiver_network_name + \
-                         '<sip:' + receiver_name + '@' + domain + '>'
+    def __add_contact(self, receiver_network_name, receiver_name, domain):  # Fix Contact
+        if receiver_network_name == '' and receiver_name == '':
+            self.__packet += '\r\nContact: ' + receiver_network_name + \
+                             '<sip:' + receiver_name + '@' + domain + '>'
+        else:
+            self.__packet += '\r\nContact: ' + receiver_network_name + \
+                             '<sip:' + receiver_name + '@' + domain + '>'
+        if receiver_name == '':
+            self.__packet += '\r\nContact: ' + receiver_network_name + \
+                             '<sip:' + domain + '>'
 
     def __add_content_type(self, content_type, content_sub_type):
         self.__packet += '\r\nContent-Type: ' + content_type + '/' + \

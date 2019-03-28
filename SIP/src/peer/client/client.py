@@ -20,7 +20,7 @@ class client:
 
     def __init__(self, username, password, client_name, domain, protocol,
                  port, client_network_name, content_type, content_sub_type):
-        self.__peer_ = peer(protocol, int(port))  # Protcol and port
+        self.__peer_ = peer(protocol, int(port))
         self.__set_username(username)
         self.__set_password(password)
         self.__set_client_name(client_name)
@@ -38,11 +38,19 @@ class client:
         self.__peer_.socket_close()
 
     def send_message(self, message, address=None):
-        self.__peer_.client_send_message(message, address) # Have to fix for TCP
+        if address:
+            self.__peer_.client_send_message(message, address=address)
+        else:
+            self.__peer_.client_send_message(message)
 
-    def receive_message(self, protocol):
-        message = self.__peer_.client_receive_message(protocol)
-        return message
+    def receive_message(self):
+        protocol = self.get_protocol()
+        if protocol == 'TCP':
+            message = self.__peer_.client_receive_message(protocol)
+            return message
+        if protocol == 'UDP':
+            (message, addr) = self.__peer_.client_receive_message(protocol)
+            return message, addr
 
     def __set_username(self, username):
         self.__username = username

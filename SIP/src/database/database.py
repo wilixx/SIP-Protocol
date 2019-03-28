@@ -33,7 +33,7 @@ class database:
     __statement = ''
 
     def __init__(self, table_name):
-        db_file = 'C:\\Users\\r&dtrainee3\\SIP-Protocol\\SIP\\src\\database\\clients.db'  # Fix folder location
+        db_file = 'C:\\Users\\nmighlani\\Desktop\\SIP-Protocol\\SIP\\src\\database\\clients.db'  # Fix folder location
         self.__conn = connect(db_file)
         self.__c = self.__conn.cursor()
         if not exists(db_file):

@@ -89,5 +89,14 @@ class response:
         self.__packet_ = 'SIP/2.0 ' + code + ' ' + response_type + \
                          self.__packet_.get_packet()
 
+    @staticmethod
+    def remove_header(packet, header_name):
+        headers = packet.split('\r\n')
+        for header in headers:
+            if header[:2] == header_name:
+                headers.remove(header)
+        packet = '\r\n'.join(headers)
+        return packet
+
     def get_packet(self):
         return self.__packet_

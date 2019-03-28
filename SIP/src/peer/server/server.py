@@ -6,7 +6,7 @@ class server:
     __peer_ = None
     __max_num_of_clients = 1
 
-    __client_threads = None  # Connected client threads Only with TCP
+    __client_threads = list()
 
     __server_name = ''
     __domain = ''
@@ -64,16 +64,16 @@ class server:
         # Have to add transfer server
 
     def send_message(self, message, address=None, client_socket=None):
-        protocol = self.get_protocol()
-        self.__peer_.server_send_message(protocol, message, client_socket,
-                                         address)
+        if address:
+            self.__peer_.server_send_message(message, address=address)
+        if client_socket:
+            self.__peer_.server_send_message(message, client_socket=client_socket)
 
     def receive_message(self, client_socket=None):
-        protocol = self.get_protocol()
-        if protocol == 'TCP':
+        if client_socket:
             message = self.__peer_.server_receive_message(client_socket)
             return message
-        if protocol == 'UDP':
+        else:
             message, client_address = self.__peer_.server_receive_message()
             return message, client_address
 

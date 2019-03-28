@@ -8,12 +8,12 @@ domain = 'VaaanInfra.com'
 client_network_name = 'Ram'
 content_type = 'application'
 content_sub_type = 'sdp'
-protocol = 'UDP'
-port = '5060'
+protocol = 'TCP'
+port = '6050'
 
 receiver_name = 'client'
 receiver_network_name = 'Client'
-server_addr = ('192.168.1.249', 5060)
+server_addr = ('192.168.1.206', 6050)
 
 node_ = node(username, password, client_name, domain, client_network_name,
              content_type, content_sub_type, protocol, port)

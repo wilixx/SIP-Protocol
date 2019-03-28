@@ -53,6 +53,7 @@ class node:
                     print('Client ' + self.__client_.get_username() + \
                           ' got Unauthorized')
         if protocol == 'TCP':
+            self.__client_.connect_to_server(server_addr)
             register_packet = self._register(self.__client_.get_client_name(),
                                              self.__client_.get_domain(),
                                              self.__client_.get_protocol(),
@@ -63,14 +64,16 @@ class node:
                                              self.__client_.get_content_sub_type(),
                                              from_tag)
             self.__client_.send_message(register_packet)
-            packet = self.__client_.receive_message(protocol)
+            packet = self.__client_.receive_message()
+            print(packet)
             headers = packet.split('\r\n')
             for header in headers:
                 if header[8:11] == '200':
                     ok_packet = packet
                     print('Client ' + self.__client_.get_username() + \
                           ' got registered')
-                    message = self.__client_.receive_message(protocol)
+                    message = self.__client_.receive_message()
+                    print(message)
                     self.establish_session(message, receiver_name,
                                            receiver_network_name, server_addr)
                 if header[8:11] == '401':
@@ -250,6 +253,7 @@ class node:
         request_.add_authorization(self.__client_.get_username(),
                                    self.__client_.get_password())
         request_ = request_.get_packet()
+        request.remove_header(request_, 'To')
         return request_
 
     def _deregister(self, client_name, domain, protocol, port, server_name,
